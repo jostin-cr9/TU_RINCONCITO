@@ -57,7 +57,23 @@ public String procesarLogin(
         return "movimientos";
     }
 
-    @GetMapping("/clientes")
+    @GetMapping("/ventas")
+    public String ventas() {
+        return "ventas";
+    }
+
+    @GetMapping("/reportes")
+    public String reportes() {
+        return "reportes";
+    }
+
+    @GetMapping("/usuarios")
+    public String usuarios() {
+        return "usuarios";
+    }
+    
+
+    @GetMapping("/cliente")
     public String clientes() {
         return "cliente";
     }
