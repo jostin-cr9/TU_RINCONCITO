@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ProyectoRincocitoApplication<ProyectoRincocito>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.ProyectoRincocito.ProyectoRincocitoApplication",
+            "projectName": "ProyectoRincocito",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
