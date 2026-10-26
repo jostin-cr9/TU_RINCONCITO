@@ -72,7 +72,7 @@ public String procesarLogin(
         return "usuarios";
     }
     
-    @GetMapping("/cliente")
+    @GetMapping({"/clientes"})
     public String clientes() {
         return "cliente";
     }
@@ -83,3 +83,4 @@ public String procesarLogin(
     }
 
 }
+
