@@ -64,15 +64,14 @@ public String procesarLogin(
 
     @GetMapping("/reportes")
     public String reportes() {
-        return "reportes";
-    }
+        return "reportes";          
+    }    
 
     @GetMapping("/usuarios")
     public String usuarios() {
         return "usuarios";
     }
     
-
     @GetMapping("/cliente")
     public String clientes() {
         return "cliente";
