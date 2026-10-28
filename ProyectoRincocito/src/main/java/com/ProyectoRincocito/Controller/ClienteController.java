@@ -10,11 +10,16 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.ProyectoRincocito.Modelo.Cliente;
 import com.ProyectoRincocito.Repository.ClienteRepository;
 
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+
 @Controller
 public class ClienteController {
     private final ClienteRepository repository;
 
-    public ClienteController(ClienteRepository repository) { this.repository = repository; }
+    public ClienteController(ClienteRepository repository) {
+        this.repository = repository;
+    }
 
     @GetMapping("/clientes")
     public String listar(Model model) {
@@ -23,7 +28,13 @@ public class ClienteController {
     }
 
     @PostMapping("/clientes/guardar")
-    public String guardar(@ModelAttribute Cliente cliente) {
+    public String guardar(@Valid @ModelAttribute("cliente") Cliente cliente,
+     BindingResult resultadoBindingResult, Model model) {
+        if (resultadoBindingResult.hasErrors()) {
+            model.addAttribute("clientes", repository.findAll());
+            model.addAttribute("mostrarFormulario", true);
+            return "cliente";
+        }
         repository.save(cliente);
         return "redirect:/clientes";
     }

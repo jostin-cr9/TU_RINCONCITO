@@ -16,22 +16,27 @@ public class Proveedor {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    
     // Validación del nombre de la empresa
     @NotBlank(message = "El nombre de la empresa no puede estar vacío")
     @Column(nullable = false, length = 100)
     private String empresa;
+
     // Validación del RUC
     @NotBlank(message = "El RUC no puede estar vacío")
     @Column (nullable = false, length = 50)
     private String ruc;
+
     // Validación del contacto
     @NotBlank(message = "El contacto no puede estar vacío")
     @Column (length = 120)
     private String contacto;
+
     // Validación del teléfono
     @NotBlank (message = "El telefono no puede estar vacio")
     @Column (length = 100)
     private String telefono;
+
     // Validación del correo
     @NotBlank(message = "El correo no puede estar vacío")
     @Column (length = 120)

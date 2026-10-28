@@ -23,10 +23,12 @@ public class Producto {
     @NotBlank(message = "El nombre del producto no puede estar vacío")
     @Column(nullable = false, length = 100)
     private String nombre;
+    
     // Validación de la descripción del producto
     @NotBlank(message = "La descripción del producto no puede estar vacía")
     @Column(nullable = false, length = 100)
     private String descripcion;
+
     // Validación del precio del producto
     @NotNull(message = "El precio del producto no puede ser nulo")
     @Min(value = 1, message = "El precio del producto debe ser un valor positivo")
@@ -34,6 +36,7 @@ public class Producto {
     @DecimalMax(value = "1000.00", message = "El precio del producto debe ser menor que los 1000.00")
     @Column(nullable = false)
     private Double precio;
+
     // Validación del stock del producto
     @NotNull(message = "El stock del producto no puede ser nulo")
     @Min(value = 0, message = "El stock del producto debe ser un valor positivo")
