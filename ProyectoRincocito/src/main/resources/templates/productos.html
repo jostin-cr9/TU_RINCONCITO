@@ -71,89 +71,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>ARR-001</td>
-                <td>Arroz Extra 5 kg</td>
-                <td>Abarrotes</td>
-                <td>S/ 24.50</td>
-                <td>45</td>
-                <td><span class="badge badge-disponible">Disponible</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>ACE-002</td>
-                <td>Aceite Vegetal 1 L</td>
-                <td>Abarrotes</td>
-                <td>S/ 8.90</td>
-                <td>8</td>
-                <td><span class="badge text-bg-warning">Stock bajo</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>LEC-003</td>
-                <td>Leche Entera 1 L</td>
-                <td>Lácteos</td>
-                <td>S/ 4.50</td>
-                <td>9</td>
-                <td><span class="badge text-bg-warning">Stock bajo</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>GAS-004</td>
-                <td>Gaseosa 1.5 L</td>
-                <td>Bebidas</td>
-                <td>S/ 6.00</td>
-                <td>50</td>
-                <td><span class="badge badge-disponible">Disponible</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>AGU-005</td>
-                <td>Agua de mesa 2.5 L</td>
-                <td>Bebidas</td>
-                <td>S/ 3.20</td>
-                <td>80</td>
-                <td><span class="badge badge-disponible">Disponible</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>GAL-006</td>
-                <td>Galletas soda pack</td>
-                <td>Snacks</td>
-                <td>S/ 5.50</td>
-                <td>5</td>
-                <td><span class="badge text-bg-warning">Stock bajo</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>LIM-007</td>
-                <td>Detergente 1 kg</td>
-                <td>Limpieza</td>
-                <td>S/ 12.00</td>
-                <td>0</td>
-                <td><span class="badge text-bg-danger">Agotado</span></td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProducto"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
+              <tr th:each="producto : ${productos}">
+                <td th:text="${producto.id}"></td>
+                <td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.categoria}"></td>
+                <td th:text="${producto.precio}"></td>
+                <td th:text="${producto.stock}"></td>
+                <td><span class="badge" th:classappend="${producto.stock == 0 ? ' text-bg-danger' : (producto.stock < 10 ? ' text-bg-warning' : ' badge-disponible')}" th:text="${producto.stock == 0 ? 'Agotado' : (producto.stock < 10 ? 'Stock bajo' : 'Disponible')}"></span></td>
+                <td><form th:action="@{/productos/{id}/eliminar(id=${producto.id})}" method="post"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form></td>
               </tr>
             </tbody>
           </table>
@@ -166,23 +91,23 @@
   <div class="modal fade" id="modalProducto" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formProducto">
+        <form id="formProducto" th:action="@{/productos/guardar}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Producto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label" for="prodCodigo">Código</label>
-              <input type="text" class="form-control" id="prodCodigo" required>
+<div class="mb-3">
+              <label class="form-label" for="prodNombre">Nombre</label>
+              <input type="text" class="form-control" id="prodNombre" name="nombre" required>
             </div>
             <div class="mb-3">
-              <label class="form-label" for="prodNombre">Nombre</label>
-              <input type="text" class="form-control" id="prodNombre" required>
+              <label class="form-label" for="prodDescripcion">Descripción</label>
+              <input type="text" class="form-control" id="prodDescripcion" name="descripcion" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodCategoria">Categoría</label>
-              <select class="form-select" id="prodCategoria" required>
+              <select class="form-select" id="prodCategoria" name="categoria" required>
                 <option value="">Seleccione</option>
                 <option>Abarrotes</option>
                 <option>Bebidas</option>
@@ -193,21 +118,11 @@
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodPrecio">Precio</label>
-              <input type="number" step="0.01" class="form-control" id="prodPrecio" required>
+              <input type="number" step="0.01" class="form-control" id="prodPrecio" name="precio" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodStock">Stock</label>
-              <input type="number" class="form-control" id="prodStock" required>
-            </div>
-            <div class="mb-0">
-              <label class="form-label" for="prodProveedor">Proveedor</label>
-              <select class="form-select" id="prodProveedor" required>
-                <option value="">Seleccione</option>
-                <option>Distribuidora Andina</option>
-                <option>Alicorp S.A.</option>
-                <option>Gloria S.A.</option>
-                <option>Backus</option>
-              </select>
+              <input type="number" class="form-control" id="prodStock" name="stock" required>
             </div>
           </div>
           <div class="modal-footer">

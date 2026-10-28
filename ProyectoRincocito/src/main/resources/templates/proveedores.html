@@ -68,49 +68,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>P001</td>
-                <td>Distribuidora Andina</td>
-                <td>20123456789</td>
-                <td>Luis Paredes</td>
-                <td>01 456 7890</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProveedor"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>P002</td>
-                <td>Alicorp S.A.</td>
-                <td>20100055237</td>
-                <td>Rosa Méndez</td>
-                <td>01 315 0800</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProveedor"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>P003</td>
-                <td>Gloria S.A.</td>
-                <td>20100190797</td>
-                <td>Pedro Salas</td>
-                <td>01 470 7070</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProveedor"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>P004</td>
-                <td>Backus</td>
-                <td>20100113610</td>
-                <td>Elena Vargas</td>
-                <td>01 211 5000</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalProveedor"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
+              <tr th:each="proveedor : ${proveedores}">
+                <td th:text="${proveedor.id}"></td>
+                <td th:text="${proveedor.empresa}"></td>
+                <td th:text="${proveedor.ruc}"></td>
+                <td th:text="${proveedor.contacto}"></td>
+                <td th:text="${proveedor.telefono}"></td>
+                <td><form th:action="@{/proveedores/{id}/eliminar(id=${proveedor.id})}" method="post"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form></td>
               </tr>
             </tbody>
           </table>
@@ -123,7 +87,7 @@
   <div class="modal fade" id="modalProveedor" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formProveedor">
+        <form id="formProveedor" th:action="@{/proveedores/guardar}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Proveedor</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -131,19 +95,19 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label" for="provEmpresa">Empresa</label>
-              <input type="text" class="form-control" id="provEmpresa" required>
+              <input type="text" class="form-control" id="provEmpresa" name="empresa" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="provRuc">RUC</label>
-              <input type="text" class="form-control" id="provRuc" maxlength="11" required>
+              <input type="text" class="form-control" id="provRuc" name="ruc" maxlength="50" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="provContacto">Contacto</label>
-              <input type="text" class="form-control" id="provContacto" required>
+              <input type="text" class="form-control" id="provContacto" name="contacto">
             </div>
             <div class="mb-0">
               <label class="form-label" for="provTelefono">Teléfono</label>
-              <input type="text" class="form-control" id="provTelefono" required>
+              <input type="text" class="form-control" id="provTelefono" name="telefono">
             </div>
           </div>
           <div class="modal-footer">

@@ -67,38 +67,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>C001</td>
-                <td>María López</td>
-                <td>45678912</td>
-                <td>987111222</td>
-                <td>maria.lopez@email.com</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalCliente"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>C002</td>
-                <td>Carlos Ruiz</td>
-                <td>40123654</td>
-                <td>986333444</td>
-                <td>carlos.ruiz@email.com</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalCliente"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
-              </tr>
-              <tr>
-                <td>C003</td>
-                <td>Ana Torres</td>
-                <td>47890123</td>
-                <td>999555666</td>
-                <td>ana.torres@email.com</td>
-                <td>
-                  <button class="btn btn-sm btn-outline-primary me-1" data-bs-toggle="modal" data-bs-target="#modalCliente"><i class="bi bi-pencil"></i></button>
-                  <button class="btn btn-sm btn-outline-danger" data-eliminar="1"><i class="bi bi-trash"></i></button>
-                </td>
+              <tr th:each="cliente : ${clientes}">
+                <td th:text="${cliente.id}"></td>
+                <td th:text="${cliente.nombre}"></td>
+                <td th:text="${cliente.documento}"></td>
+                <td th:text="${cliente.telefono}"></td>
+                <td th:text="${cliente.correo}"></td>
+                <td><form th:action="@{/clientes/{id}/eliminar(id=${cliente.id})}" method="post"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form></td>
               </tr>
             </tbody>
           </table>
@@ -111,7 +86,7 @@
   <div class="modal fade" id="modalCliente" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formCliente">
+        <form id="formCliente" th:action="@{/clientes/guardar}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Cliente</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -119,19 +94,19 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label" for="cliNombre">Nombre</label>
-              <input type="text" class="form-control" id="cliNombre" required>
+              <input type="text" class="form-control" id="cliNombre" name="nombre" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="cliDni">DNI</label>
-              <input type="text" class="form-control" id="cliDni" maxlength="8" required>
+              <input type="text" class="form-control" id="cliDni" name="documento" maxlength="20" required>
             </div>
             <div class="mb-3">
               <label class="form-label" for="cliTelefono">Teléfono</label>
-              <input type="text" class="form-control" id="cliTelefono" required>
+              <input type="text" class="form-control" id="cliTelefono" name="telefono">
             </div>
             <div class="mb-0">
               <label class="form-label" for="cliCorreo">Correo</label>
-              <input type="email" class="form-control" id="cliCorreo" required>
+              <input type="email" class="form-control" id="cliCorreo" name="correo">
             </div>
           </div>
           <div class="modal-footer">

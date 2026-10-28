@@ -70,41 +70,14 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>V-0015</td>
-                <td>María López</td>
-                <td>Arroz Extra 5 kg</td>
-                <td>2</td>
-                <td>S/ 24.50</td>
-                <td>S/ 49.00</td>
-                <td>2026-09-08</td>
-              </tr>
-              <tr>
-                <td>V-0014</td>
-                <td>Carlos Ruiz</td>
-                <td>Gaseosa 1.5 L</td>
-                <td>4</td>
-                <td>S/ 6.00</td>
-                <td>S/ 24.00</td>
-                <td>2026-09-08</td>
-              </tr>
-              <tr>
-                <td>V-0013</td>
-                <td>Ana Torres</td>
-                <td>Leche Entera 1 L</td>
-                <td>6</td>
-                <td>S/ 4.50</td>
-                <td>S/ 27.00</td>
-                <td>2026-09-07</td>
-              </tr>
-              <tr>
-                <td>V-0012</td>
-                <td>Cliente general</td>
-                <td>Galletas soda pack</td>
-                <td>3</td>
-                <td>S/ 5.50</td>
-                <td>S/ 16.50</td>
-                <td>2026-09-07</td>
+              <tr th:each="detalle : ${detallesVenta}">
+                <td th:text="${detalle.venta.id}"></td>
+                <td th:text="${detalle.venta.cliente != null ? detalle.venta.cliente.nombre : 'Cliente general'}"></td>
+                <td th:text="${detalle.producto.nombre}"></td>
+                <td th:text="${detalle.cantidad}"></td>
+                <td th:text="${detalle.precioUnitario}"></td>
+                <td th:text="${detalle.subtotal}"></td>
+                <td th:text="${#temporals.format(detalle.venta.fecha, 'yyyy-MM-dd')}"></td>
               </tr>
             </tbody>
           </table>
@@ -117,44 +90,28 @@
   <div class="modal fade" id="modalVenta" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formVenta">
+        <form id="formVenta" th:action="@{/ventas/guardar}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Registrar venta</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
           </div>
           <div class="modal-body">
-            <div class="mb-3">
-              <label class="form-label" for="ventaNumero">Número de venta</label>
-              <input type="text" class="form-control" id="ventaNumero" value="V-0016" required>
-            </div>
-            <div class="mb-3">
+<div class="mb-3">
               <label class="form-label" for="ventaCliente">Cliente</label>
-              <select class="form-select" id="ventaCliente" required>
-                <option>Cliente general</option>
-                <option>María López</option>
-                <option>Carlos Ruiz</option>
-                <option>Ana Torres</option>
-              </select>
+              <select class="form-select" id="ventaCliente" name="clienteId"><option value="">Cliente general</option><option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nombre}"></option></select>
             </div>
             <div class="mb-3">
               <label class="form-label" for="ventaProducto">Producto</label>
-              <select class="form-select" id="ventaProducto" required>
-                <option>Arroz Extra 5 kg</option>
-                <option>Aceite Vegetal 1 L</option>
-                <option>Leche Entera 1 L</option>
-                <option>Gaseosa 1.5 L</option>
-                <option>Agua de mesa 2.5 L</option>
-                <option>Galletas soda pack</option>
-              </select>
+              <select class="form-select" id="ventaProducto" name="productoId" required><option value="">Seleccione</option><option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}" th:disabled="${producto.stock == 0}"></option></select>
             </div>
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label class="form-label" for="ventaCantidad">Cantidad</label>
-                <input type="number" min="1" class="form-control" id="ventaCantidad" required>
+                <input type="number" min="1" class="form-control" id="ventaCantidad" name="cantidad" min="1" required>
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label" for="ventaPrecio">Precio</label>
-                <input type="number" step="0.01" class="form-control" id="ventaPrecio" required>
+                <input type="number" step="0.01" class="form-control" id="ventaPrecio" readonly>
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label" for="ventaTotal">Total</label>
@@ -163,7 +120,7 @@
             </div>
             <div class="mb-0">
               <label class="form-label" for="ventaFecha">Fecha</label>
-              <input type="date" class="form-control" id="ventaFecha" required>
+              <input type="date" class="form-control" id="ventaFecha" name="fecha" required>
             </div>
           </div>
           <div class="modal-footer">
