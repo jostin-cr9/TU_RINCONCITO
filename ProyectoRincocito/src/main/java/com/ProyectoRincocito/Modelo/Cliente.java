@@ -6,6 +6,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
 @Entity
 @Table(name = "clientes")
 public class Cliente {
@@ -13,16 +16,23 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    // Validación del nombre del cliente
+    @NotBlank(message = "El nombre del cliente no puede estar vacío")
     @Column(nullable = false, length = 100)
     private String nombre;
 
+    // Validación del documento del cliente
+    @NotBlank(message = "El documento del cliente no puede estar vacío")
     @Column(nullable = false, length = 20)
     private String documento;
 
+    // Validación del teléfono del cliente
+    @NotBlank(message = "El teléfono del cliente no puede estar vacío")
     @Column(length = 20)
     private String telefono;
 
+    // Validación del correo del cliente
+    @NotBlank(message = "El correo del cliente no puede estar vacío")
     @Column(length = 120)
     private String correo;
 
