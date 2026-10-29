@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.ProyectoRincocito.Modelo.Proveedor;
 import com.ProyectoRincocito.Repository.ProveedorRepository;
 
+import jakarta.validation.Valid;
+import org.springframework.validation.BindingResult;
+
 @Controller
 public class ProveedorController {
     private final ProveedorRepository repository;
@@ -23,7 +26,13 @@ public class ProveedorController {
     }
 
     @PostMapping("/proveedores/guardar")
-    public String guardar(@ModelAttribute Proveedor proveedor) {
+    public String guardar(@Valid @ModelAttribute Proveedor proveedor,
+         BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("proveedores", repository.findAll());    
+            model.addAttribute("mostrarFormulario", true);
+            return "proveedores";
+        }
         repository.save(proveedor);
         return "redirect:/proveedores";
     }
