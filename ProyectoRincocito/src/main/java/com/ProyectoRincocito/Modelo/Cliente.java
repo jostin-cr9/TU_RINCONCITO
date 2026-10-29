@@ -7,7 +7,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Email;
 
 @Entity
 @Table(name = "clientes")
@@ -26,13 +26,10 @@ public class Cliente {
     @Column(nullable = false, length = 20)
     private String documento;
 
-    // Validación del teléfono del cliente
-    @NotBlank(message = "El teléfono del cliente no puede estar vacío")
     @Column(length = 20)
     private String telefono;
 
-    // Validación del correo del cliente
-    @NotBlank(message = "El correo del cliente no puede estar vacío")
+    @Email(message = "Ingresa un correo válido")
     @Column(length = 120)
     private String correo;
 
