@@ -74,7 +74,10 @@
                 <td th:text="${proveedor.ruc}"></td>
                 <td th:text="${proveedor.contacto}"></td>
                 <td th:text="${proveedor.telefono}"></td>
-                <td><form th:action="@{/proveedores/{id}/eliminar(id=${proveedor.id})}" method="post"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form></td>
+                <td class="d-flex gap-1">
+                  <a class="btn btn-sm btn-outline-primary" th:href="@{/proveedores/{id}/editar(id=${proveedor.id})}">Editar</a>
+                  <form th:action="@{/proveedores/{id}/eliminar(id=${proveedor.id})}" method="post"><button class="btn btn-sm btn-outline-danger" type="submit"><i class="bi bi-trash"></i></button></form>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -87,7 +90,7 @@
   <div class="modal fade" id="modalProveedor" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formProveedor" th:action="@{/proveedores/guardar}" method="post">
+        <form id="formProveedor" th:action="@{/proveedores/guardar}" th:object="${proveedor}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Proveedor</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -95,19 +98,22 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label" for="provEmpresa">Empresa</label>
-              <input type="text" class="form-control" id="provEmpresa" name="empresa" required>
+              <input type="hidden" th:field="*{id}">
+              <input type="text" class="form-control" id="provEmpresa" th:field="*{empresa}" required>
+              <div class="text-danger" th:if="${#fields.hasErrors('empresa')}" th:errors="*{empresa}"></div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="provRuc">RUC</label>
-              <input type="text" class="form-control" id="provRuc" name="ruc" maxlength="50" required>
+              <input type="text" class="form-control" id="provRuc" th:field="*{ruc}" maxlength="50" required>
+              <div class="text-danger" th:if="${#fields.hasErrors('ruc')}" th:errors="*{ruc}"></div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="provContacto">Contacto</label>
-              <input type="text" class="form-control" id="provContacto" name="contacto">
+              <input type="text" class="form-control" id="provContacto" th:field="*{contacto}">
             </div>
             <div class="mb-0">
               <label class="form-label" for="provTelefono">Teléfono</label>
-              <input type="text" class="form-control" id="provTelefono" name="telefono">
+              <input type="text" class="form-control" id="provTelefono" th:field="*{telefono}">
             </div>
           </div>
           <div class="modal-footer">
@@ -120,6 +126,11 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:if="${mostrarFormulario}">
+    document.addEventListener("DOMContentLoaded", function () {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById("modalProveedor")).show();
+    });
+  </script>
   <script src="js/script.js"></script>
 </body>
 </html>

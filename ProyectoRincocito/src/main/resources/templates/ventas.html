@@ -26,7 +26,7 @@
             <a class="nav-link link-body-emphasis" th:href="@{/inventario}"><i class="bi bi-clipboard-data me-2"></i>Inventario</a>
             <a class="nav-link link-body-emphasis" th:href="@{/movimientos}"><i class="bi bi-arrow-left-right me-2"></i>Entradas y salidas</a>
             <a class="nav-link active" aria-current="page" th:href="@{/ventas}"><i class="bi bi-receipt me-2"></i>Ventas</a>
-            <a class="nav-link link-body-emphasis" th:href="@{/cliente}"><i class="bi bi-people me-2"></i>Clientes</a>
+            <a class="nav-link link-body-emphasis" th:href="@{/clientes}"><i class="bi bi-people me-2"></i>Clientes</a>
             <a class="nav-link link-body-emphasis" th:href="@{/proveedores}"><i class="bi bi-truck me-2"></i>Proveedores</a>
             <a class="nav-link link-body-emphasis" th:href="@{/reportes}"><i class="bi bi-bar-chart me-2"></i>Reportes</a>
             <a class="nav-link link-body-emphasis" th:href="@{/usuarios}"><i class="bi bi-person-gear me-2"></i>Usuarios</a>
@@ -67,6 +67,7 @@
                 <th>Precio</th>
                 <th>Total</th>
                 <th>Fecha</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -78,6 +79,11 @@
                 <td th:text="${detalle.precioUnitario}"></td>
                 <td th:text="${detalle.subtotal}"></td>
                 <td th:text="${#temporals.format(detalle.venta.fecha, 'yyyy-MM-dd')}"></td>
+                <td>
+                  <form th:action="@{/detalles-venta/{id}/eliminar(id=${detalle.id})}" method="post">
+                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Eliminar detalle"><i class="bi bi-trash"></i></button>
+                  </form>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -90,7 +96,7 @@
   <div class="modal fade" id="modalVenta" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formVenta" th:action="@{/ventas/guardar}" method="post">
+        <form id="formVenta" th:action="@{/ventas/guardar}" th:object="${ventaFormulario}" method="post">
           <div class="modal-header">
             <h5 class="modal-title">Registrar venta</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -98,16 +104,19 @@
           <div class="modal-body">
 <div class="mb-3">
               <label class="form-label" for="ventaCliente">Cliente</label>
-              <select class="form-select" id="ventaCliente" name="clienteId"><option value="">Cliente general</option><option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nombre}"></option></select>
+              <select class="form-select" id="ventaCliente" th:field="*{clienteId}"><option value="">Cliente general</option><option th:each="cliente : ${clientes}" th:value="${cliente.id}" th:text="${cliente.nombre}"></option></select>
+              <div class="text-danger" th:if="${#fields.hasErrors('clienteId')}" th:errors="*{clienteId}"></div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="ventaProducto">Producto</label>
-              <select class="form-select" id="ventaProducto" name="productoId" required><option value="">Seleccione</option><option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}" th:disabled="${producto.stock == 0}"></option></select>
+              <select class="form-select" id="ventaProducto" th:field="*{productoId}" required><option value="">Seleccione</option><option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}" th:disabled="${producto.stock == 0}"></option></select>
+              <div class="text-danger" th:if="${#fields.hasErrors('productoId')}" th:errors="*{productoId}"></div>
             </div>
             <div class="row">
               <div class="col-md-4 mb-3">
                 <label class="form-label" for="ventaCantidad">Cantidad</label>
-                <input type="number" min="1" class="form-control" id="ventaCantidad" name="cantidad" min="1" required>
+                <input type="number" min="1" class="form-control" id="ventaCantidad" th:field="*{cantidad}" required>
+                <div class="text-danger" th:if="${#fields.hasErrors('cantidad')}" th:errors="*{cantidad}"></div>
               </div>
               <div class="col-md-4 mb-3">
                 <label class="form-label" for="ventaPrecio">Precio</label>
@@ -120,7 +129,8 @@
             </div>
             <div class="mb-0">
               <label class="form-label" for="ventaFecha">Fecha</label>
-              <input type="date" class="form-control" id="ventaFecha" name="fecha" required>
+              <input type="date" class="form-control" id="ventaFecha" th:field="*{fecha}" required>
+              <div class="text-danger" th:if="${#fields.hasErrors('fecha')}" th:errors="*{fecha}"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -133,6 +143,11 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:if="${mostrarFormulario}">
+    document.addEventListener("DOMContentLoaded", function () {
+      bootstrap.Modal.getOrCreateInstance(document.getElementById("modalVenta")).show();
+    });
+  </script>
   <script src="js/script.js"></script>
 </body>
 </html>

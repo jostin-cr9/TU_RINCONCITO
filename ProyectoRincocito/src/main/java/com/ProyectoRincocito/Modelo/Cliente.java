@@ -16,12 +16,11 @@ public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    // Validación del nombre del cliente
+
     @NotBlank(message = "El nombre del cliente no puede estar vacío")
     @Column(nullable = false, length = 100)
     private String nombre;
 
-    // Validación del documento del cliente
     @NotBlank(message = "El documento del cliente no puede estar vacío")
     @Column(nullable = false, length = 20)
     private String documento;
