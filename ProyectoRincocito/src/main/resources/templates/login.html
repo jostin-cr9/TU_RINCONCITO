@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
 
 <head>
   <meta charset="UTF-8">
@@ -11,24 +11,23 @@
 
 <body class="bg-light d-flex align-items-center min-vh-100">
   <div class="container py-5">
-    <div class="card shadow border-0 rounded-4 mx-auto p-4 w-100" style="max-width: 420px;">
+    <div class="card shadow border-0 rounded-4 p-4 w-100 col-12 col-md-8 col-lg-5 col-xl-4 mx-auto">
       <div class="text-center mb-4">
         <img th:src="@{/img/logo_sin_fondo_BODEGA.png}" alt="logo" width="120" height="80" class="mb-2">
         <h1 class="h4 text-success mb-1 fw-bold">TU RINCONCITO</h1>
         <p class="text-muted small mb-0">Intranet del personal</p>
       </div>
 
-      <div id="loginAlerta" class="alert d-none" role="alert"></div>
+      <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
 
       <form id="formLogin" th:action="@{/login}" method="post">
         <div class="mb-3 fw-bold">
           <label for="usuario" class="form-label">Usuario</label>
-          <input type="text" class="form-control" id="usuario" placeholder="Ingrese su usuario">
+          <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required>
         </div>
         <div class="mb-3 fw-bold">
           <label for="clave" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="clave" 
-          placeholder="Ingrese su contraseña">
+          <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su contraseña" required>
         </div>
         <button type="submit" class="btn btn-success w-100 rounded-3">
         Iniciar sesión
@@ -60,7 +59,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-verde">Enviar</button>
+            <button type="submit" class="btn btn-success">Enviar</button>
           </div>
         </form>
       </div>
@@ -68,7 +67,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/script.js"></script>
   <script>
     // Login de la intranet. Por ahora valida contra una cuenta de prueba
     // porque todavía no está conectado el backend (Spring Security/JWT).

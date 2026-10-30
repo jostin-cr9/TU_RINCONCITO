@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.ProyectoRincocito.Modelo.Producto;
+import com.ProyectoRincocito.Repository.DetalleVentaRepository;
+import com.ProyectoRincocito.Repository.MovimientoRepository;
 import com.ProyectoRincocito.Repository.ProductoRepository;
 
 import jakarta.validation.Valid;
@@ -16,9 +18,15 @@ import jakarta.validation.Valid;
 @Controller
 public class ProductoController {
     private final ProductoRepository repository;
+    private final MovimientoRepository movimientoRepository;
+    private final DetalleVentaRepository detalleVentaRepository;
 
-    public ProductoController(ProductoRepository repository) {
+    public ProductoController(ProductoRepository repository,
+            MovimientoRepository movimientoRepository,
+            DetalleVentaRepository detalleVentaRepository) {
         this.repository = repository;
+        this.movimientoRepository = movimientoRepository;
+        this.detalleVentaRepository = detalleVentaRepository;
     }
 
     @GetMapping("/productos")
@@ -54,6 +62,9 @@ public class ProductoController {
 
     @PostMapping("/productos/{id}/eliminar")
     public String eliminar(@PathVariable Long id) {
+        if (movimientoRepository.existsByProducto_Id(id) || detalleVentaRepository.existsByProducto_Id(id)) {
+            return "redirect:/productos?error=movimientos";
+        }
         repository.deleteById(id);
         return "redirect:/productos";
     }

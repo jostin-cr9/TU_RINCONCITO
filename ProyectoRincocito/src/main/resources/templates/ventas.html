@@ -9,7 +9,7 @@
 </head>
 <body class="bg-body-tertiary">
 <div class="row g-0 min-vh-100 align-content-start align-content-lg-stretch">
-  <!-- Barra lateral: fija en pantallas grandes, menú desplegable (offcanvas) en móviles -->
+
   <div class="col-lg-3 col-xl-2 bg-dark" data-bs-theme="dark">
     <aside class="offcanvas-lg offcanvas-start bg-dark sticky-lg-top vh-100 d-flex flex-column" tabindex="-1" id="sidebar" aria-labelledby="sidebarLabel">
       <div class="offcanvas-header d-flex border-bottom border-secondary">
@@ -50,7 +50,7 @@
     <main class="p-3 p-md-4">
       <div class="d-flex justify-content-between align-items-center mb-3">
         <p class="text-muted mb-0">Registro e historial de ventas.</p>
-        <button class="btn btn-verde" data-bs-toggle="modal" data-bs-target="#modalVenta">
+        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalVenta">
           Registrar venta
         </button>
       </div>
@@ -109,7 +109,7 @@
             </div>
             <div class="mb-3">
               <label class="form-label" for="ventaProducto">Producto</label>
-              <select class="form-select" id="ventaProducto" th:field="*{productoId}" required><option value="">Seleccione</option><option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}" th:disabled="${producto.stock == 0}"></option></select>
+              <select class="form-select" id="ventaProducto" th:field="*{productoId}" required><option value="">Seleccione</option><option th:each="producto : ${productos}" th:value="${producto.id}" th:text="${producto.nombre}" th:disabled="${producto.stock == 0}" th:attr="data-precio=${producto.precio},data-stock=${producto.stock}"></option></select>
               <div class="text-danger" th:if="${#fields.hasErrors('productoId')}" th:errors="*{productoId}"></div>
             </div>
             <div class="row">
@@ -135,7 +135,7 @@
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-            <button type="submit" class="btn btn-verde">Guardar venta</button>
+            <button type="submit" class="btn btn-success">Guardar venta</button>
           </div>
         </form>
       </div>
@@ -148,6 +148,22 @@
       bootstrap.Modal.getOrCreateInstance(document.getElementById("modalVenta")).show();
     });
   </script>
-  <script src="js/script.js"></script>
+  <script>
+    const productoVenta = document.getElementById("ventaProducto");
+    const cantidadVenta = document.getElementById("ventaCantidad");
+    const precioVenta = document.getElementById("ventaPrecio");
+    const totalVenta = document.getElementById("ventaTotal");
+    function actualizarTotalVenta() {
+      const opcion = productoVenta.selectedOptions[0];
+      const precio = Number(opcion?.dataset.precio || 0);
+      const cantidad = Number(cantidadVenta.value || 0);
+      precioVenta.value = precio ? precio.toFixed(2) : "";
+      totalVenta.value = (precio * cantidad).toFixed(2);
+      cantidadVenta.max = opcion?.dataset.stock || "";
+    }
+    productoVenta.addEventListener("change", actualizarTotalVenta);
+    cantidadVenta.addEventListener("input", actualizarTotalVenta);
+    actualizarTotalVenta();
+  </script>
 </body>
 </html>

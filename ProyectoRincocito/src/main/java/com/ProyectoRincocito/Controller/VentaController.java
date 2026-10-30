@@ -9,11 +9,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import com.ProyectoRincocito.Modelo.DetalleVenta;
+import com.ProyectoRincocito.Modelo.Movimiento;
 import com.ProyectoRincocito.Modelo.Producto;
 import com.ProyectoRincocito.Modelo.Venta;
 import com.ProyectoRincocito.Modelo.VentaFormulario;
 import com.ProyectoRincocito.Repository.ClienteRepository;
 import com.ProyectoRincocito.Repository.DetalleVentaRepository;
+import com.ProyectoRincocito.Repository.MovimientoRepository;
 import com.ProyectoRincocito.Repository.ProductoRepository;
 import com.ProyectoRincocito.Repository.VentaRepository;
 
@@ -25,15 +27,18 @@ public class VentaController {
     private final DetalleVentaRepository detalleRepository;
     private final ClienteRepository clienteRepository;
     private final ProductoRepository productoRepository;
+    private final MovimientoRepository movimientoRepository;
 
     public VentaController(VentaRepository ventaRepository,
             DetalleVentaRepository detalleRepository,
             ClienteRepository clienteRepository,
-            ProductoRepository productoRepository) {
+            ProductoRepository productoRepository,
+            MovimientoRepository movimientoRepository) {
         this.ventaRepository = ventaRepository;
         this.detalleRepository = detalleRepository;
         this.clienteRepository = clienteRepository;
         this.productoRepository = productoRepository;
+        this.movimientoRepository = movimientoRepository;
     }
 
     @GetMapping("/ventas")
@@ -89,6 +94,14 @@ public class VentaController {
 
         producto.setStock(producto.getStock() - formulario.getCantidad());
         productoRepository.save(producto);
+
+        Movimiento movimiento = new Movimiento();
+        movimiento.setProducto(producto);
+        movimiento.setTipo("Salida");
+        movimiento.setCantidad(formulario.getCantidad());
+        movimiento.setFecha(formulario.getFecha());
+        movimiento.setMotivo("Venta #" + venta.getId());
+        movimientoRepository.save(movimiento);
         return "redirect:/ventas";
     }
 

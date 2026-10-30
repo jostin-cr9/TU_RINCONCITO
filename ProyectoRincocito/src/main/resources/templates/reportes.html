@@ -6,7 +6,6 @@
   <title>Reportes - TU RINCONCITO</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
-  <link href="css/style.css" rel="stylesheet">
 </head>
 <body class="bg-body-tertiary">
 <div class="row g-0 min-vh-100 align-content-start align-content-lg-stretch">
@@ -27,7 +26,7 @@
             <a class="nav-link link-body-emphasis" th:href="@{/inventario}"><i class="bi bi-clipboard-data me-2"></i>Inventario</a>
             <a class="nav-link link-body-emphasis" th:href="@{/movimientos}"><i class="bi bi-arrow-left-right me-2"></i>Entradas y salidas</a>
             <a class="nav-link link-body-emphasis" th:href="@{/ventas}"><i class="bi bi-receipt me-2"></i>Ventas</a>
-            <a class="nav-link link-body-emphasis" th:href="@{/cliente}"><i class="bi bi-people me-2"></i>Clientes</a>
+            <a class="nav-link link-body-emphasis" th:href="@{/clientes}"><i class="bi bi-people me-2"></i>Clientes</a>
             <a class="nav-link link-body-emphasis" th:href="@{/proveedores}"><i class="bi bi-truck me-2"></i>Proveedores</a>
             <a class="nav-link active" aria-current="page" th:href="@{/reportes}"><i class="bi bi-bar-chart me-2"></i>Reportes</a>
             <a class="nav-link link-body-emphasis" th:href="@{/usuarios}"><i class="bi bi-person-gear me-2"></i>Usuarios</a>
@@ -52,37 +51,109 @@
       <p class="text-muted mb-4">Consulta y descarga de reportes del sistema.</p>
       <div class="row g-4">
         <div class="col-md-4">
-          <div class="card reporte-card p-4">
-            <div class="icono mb-3" style="width:48px;height:48px;border-radius:8px;background:#d8f3dc;color:#2d6a4f;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
+          <div class="card shadow-sm h-100 p-4">
+            <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success-emphasis p-3 fs-4">
               <i class="bi bi-clipboard-data"></i>
             </div>
             <h5>Reporte de inventario</h5>
-            <p class="text-muted">Stock actual, mínimos y estado de cada producto.</p>
-            <button class="btn btn-verde btn-sm me-2" data-reporte="ver reporte de inventario">Ver reporte</button>
-            <button class="btn btn-outline-secondary btn-sm" data-reporte="descargar reporte de inventario">Descargar</button>
+            <p class="text-muted">Stock actual y estado de cada producto.</p>
+            <a class="btn btn-success btn-sm me-2" href="#reporteInventario">Ver reporte</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/reportes/inventario.csv}">Descargar CSV</a>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card reporte-card p-4">
-            <div class="icono mb-3" style="width:48px;height:48px;border-radius:8px;background:#d8f3dc;color:#2d6a4f;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
+          <div class="card shadow-sm h-100 p-4">
+            <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-info-subtle text-info-emphasis p-3 fs-4">
+              <i class="bi bi-arrow-left-right"></i>
+            </div>
+            <h5>Reporte de movimientos</h5>
+            <p class="text-muted">Historial de entradas, salidas y ajustes de stock.</p>
+            <a class="btn btn-success btn-sm me-2" href="#reporteMovimientos">Ver reporte</a>
+            <a class="btn btn-outline-secondary btn-sm mt-2" th:href="@{/reportes/movimientos.csv}">Descargar CSV</a>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="card shadow-sm h-100 p-4">
+            <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success-emphasis p-3 fs-4">
               <i class="bi bi-receipt"></i>
             </div>
             <h5>Reporte de ventas</h5>
             <p class="text-muted">Ventas del día, montos y productos más vendidos.</p>
-            <button class="btn btn-verde btn-sm me-2" data-reporte="ver reporte de ventas">Ver reporte</button>
-            <button class="btn btn-outline-secondary btn-sm" data-reporte="descargar reporte de ventas">Descargar</button>
+            <a class="btn btn-success btn-sm me-2" href="#reporteVentas">Ver reporte</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/reportes/ventas.csv}">Descargar CSV</a>
           </div>
         </div>
         <div class="col-md-4">
-          <div class="card reporte-card p-4">
-            <div class="icono mb-3" style="width:48px;height:48px;border-radius:8px;background:#d8f3dc;color:#2d6a4f;display:flex;align-items:center;justify-content:center;font-size:1.4rem;">
+          <div class="card shadow-sm h-100 p-4">
+            <div class="mb-3 d-inline-flex align-items-center justify-content-center rounded-circle bg-success-subtle text-success-emphasis p-3 fs-4">
               <i class="bi bi-exclamation-triangle"></i>
             </div>
             <h5>Productos con stock bajo</h5>
             <p class="text-muted">Listado de productos agotados o por reponer.</p>
-            <button class="btn btn-verde btn-sm me-2" data-reporte="ver reporte de stock bajo">Ver reporte</button>
-            <button class="btn btn-outline-secondary btn-sm" data-reporte="descargar reporte de stock bajo">Descargar</button>
+            <a class="btn btn-success btn-sm me-2" href="#reporteStockBajo">Ver reporte</a>
+            <a class="btn btn-outline-secondary btn-sm" th:href="@{/reportes/stock-bajo.csv}">Descargar CSV</a>
           </div>
+        </div>
+      </div>
+      <div class="card shadow-sm mt-4" id="reporteInventario">
+        <div class="card-header bg-white"><strong>Inventario actual</strong></div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead><tr><th>ID</th><th>Producto</th><th>Categoría</th><th>Precio</th><th>Stock</th></tr></thead>
+            <tbody>
+              <tr th:each="producto : ${productos}">
+                <td th:text="${producto.id}"></td><td th:text="${producto.nombre}"></td>
+                <td th:text="${producto.categoria}"></td><td th:text="${producto.precio}"></td><td th:text="${producto.stock}"></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(productos)}"><td colspan="5" class="text-center text-muted">No hay productos registrados.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card shadow-sm mt-4" id="reporteVentas">
+        <div class="card-header bg-white"><strong>Detalle de ventas</strong></div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead><tr><th>Venta</th><th>Fecha</th><th>Cliente</th><th>Producto</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
+            <tbody>
+              <tr th:each="detalle : ${detallesVenta}">
+                <td th:text="${detalle.venta.id}"></td><td th:text="${#temporals.format(detalle.venta.fecha, 'yyyy-MM-dd')}"></td>
+                <td th:text="${detalle.venta.cliente != null ? detalle.venta.cliente.nombre : 'Cliente general'}"></td>
+                <td th:text="${detalle.producto.nombre}"></td><td th:text="${detalle.cantidad}"></td><td th:text="${detalle.subtotal}"></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(detallesVenta)}"><td colspan="6" class="text-center text-muted">No hay ventas registradas.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card shadow-sm mt-4" id="reporteStockBajo">
+        <div class="card-header bg-white"><strong>Productos agotados o con stock bajo (menos de 10 unidades)</strong></div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead><tr><th>ID</th><th>Producto</th><th>Stock actual</th><th>Estado</th></tr></thead>
+            <tbody>
+              <tr th:each="producto : ${productosStockBajo}">
+                <td th:text="${producto.id}"></td><td th:text="${producto.nombre}"></td><td th:text="${producto.stock}"></td>
+                <td><span class="badge" th:classappend="${producto.stock == 0 ? ' text-bg-danger' : ' text-bg-warning'}" th:text="${producto.stock == 0 ? 'Agotado' : 'Stock bajo'}"></span></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(productosStockBajo)}"><td colspan="4" class="text-center text-muted">No hay productos con stock bajo.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="card shadow-sm mt-4" id="reporteMovimientos">
+        <div class="card-header bg-white"><strong>Historial de movimientos</strong></div>
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
+            <thead><tr><th>Fecha</th><th>Producto</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr></thead>
+            <tbody>
+              <tr th:each="movimiento : ${movimientos}">
+                <td th:text="${movimiento.fecha}"></td><td th:text="${movimiento.producto.nombre}"></td>
+                <td th:text="${movimiento.tipo}"></td><td th:text="${movimiento.cantidad}"></td><td th:text="${movimiento.motivo}"></td>
+              </tr>
+              <tr th:if="${#lists.isEmpty(movimientos)}"><td colspan="5" class="text-center text-muted">No hay movimientos registrados.</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </main>
@@ -90,6 +161,5 @@
 </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="js/script.js"></script>
 </body>
 </html>
