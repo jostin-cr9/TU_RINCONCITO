@@ -63,9 +63,9 @@
       </header>
 
       <main class="p-3 p-md-4">
-      <div class="alert alert-warning" role="alert" th:if="${param.error}">
-        No se puede eliminar este producto porque tiene ventas o movimientos registrados.
-      </div>
+        <div class="alert alert-warning" role="alert" th:if="${param.error}">
+          No se puede eliminar este producto porque tiene ventas o movimientos registrados.
+        </div>
         <div class="d-flex justify-content-between align-items-center mb-3">
           <p class="text-muted mb-0">Gestión del catálogo de productos.</p>
           <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalProducto">
@@ -114,7 +114,7 @@
   <div class="modal fade" id="modalProducto" tabindex="-1">
     <div class="modal-dialog">
       <div class="modal-content">
-        <form id="formProducto" th:action="@{/productos/guardar}" method="post">
+        <form id="formProducto" th:action="@{/productos/guardar}" method="post" th:object="${producto}" novalidate>
           <div class="modal-header">
             <h5 class="modal-title">Producto</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
@@ -122,19 +122,30 @@
           <div class="modal-body">
             <div class="mb-3">
               <label class="form-label" for="prodCodigo">Código</label>
-              <input type="text" class="form-control" id="prodCodigo" name="codigo" maxlength="50" required>
+              <input type="text" class="form-control" id="prodCodigo" name="codigo" maxlength="10" required
+                th:value="${producto.codigo}" th:classappend="${#fields.hasErrors('codigo')} ? ' is-invalid'">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('codigo')}" th:errors="${producto.codigo}"></div>
+              <div class="invalid-feedback" data-client-error>Ingresa un código de hasta 10 caracteres.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodNombre">Nombre</label>
-              <input type="text" class="form-control" id="prodNombre" name="nombre" required>
+              <input type="text" class="form-control" id="prodNombre" name="nombre" required
+                th:value="${producto.nombre}" th:classappend="${#fields.hasErrors('nombre')} ? ' is-invalid'">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('nombre')}" th:errors="${producto.nombre}"></div>
+              <div class="invalid-feedback" data-client-error>Ingresa el nombre del producto.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodDescripcion">Descripción</label>
-              <input type="text" class="form-control" id="prodDescripcion" name="descripcion" required>
+              <input type="text" class="form-control" id="prodDescripcion" name="descripcion" required
+                th:value="${producto.descripcion}" th:classappend="${#fields.hasErrors('descripcion')} ? ' is-invalid'">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('descripcion')}"
+                th:errors="${producto.descripcion}"></div>
+              <div class="invalid-feedback" data-client-error>Ingresa la descripción del producto.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodCategoria">Categoría</label>
-              <select class="form-select" id="prodCategoria" name="categoria" required>
+              <select class="form-select" id="prodCategoria" name="categoria" required
+                th:classappend="${#fields.hasErrors('categoria')} ? ' is-invalid'">
                 <option value="">Seleccione</option>
                 <option>Abarrotes</option>
                 <option>Bebidas</option>
@@ -142,14 +153,24 @@
                 <option>Snacks</option>
                 <option>Limpieza</option>
               </select>
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('categoria')}" th:errors="${producto.categoria}">
+              </div>
+              <div class="invalid-feedback" data-client-error>Selecciona una categoría.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodPrecio">Precio</label>
-              <input type="number" step="0.01" class="form-control" id="prodPrecio" name="precio" required>
+              <input type="number" step="0.01" min="1" max="500" class="form-control" id="prodPrecio" name="precio"
+                required th:value="${producto.precio}" th:classappend="${#fields.hasErrors('precio')} ? ' is-invalid'">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('precio')}" th:errors="${producto.precio}"></div>
+              <div class="invalid-feedback" data-client-error>El precio debe estar entre 1 y 500.</div>
             </div>
             <div class="mb-3">
               <label class="form-label" for="prodStock">Stock</label>
-              <input type="number" class="form-control" id="prodStock" name="stock" required>
+              <input type="number" min="0" step="1" class="form-control" id="prodStock" name="stock" required
+                th:value="${producto.stock}" th:classappend="${#fields.hasErrors('stock')} ? ' is-invalid'">
+              <div class="invalid-feedback" th:if="${#fields.hasErrors('stock')}" th:errors="${producto.stock}"></div>
+              <div class="invalid-feedback" data-client-error>El stock debe ser un número entero igual o mayor que 0.
+              </div>
             </div>
           </div>
           <div class="modal-footer">
@@ -162,6 +183,35 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script th:inline="javascript">
+    (() => {
+      const form = document.getElementById('formProducto');
+      const modalElement = document.getElementById('modalProducto');
+      const fields = [...form.querySelectorAll('input, select')];
+      const validateField = (field, revealEmpty = false) => {
+        const feedback = field.parentElement.querySelector('[data-client-error]');
+        const invalid = !field.checkValidity() || (revealEmpty && field.required && !field.value.trim());
+        field.classList.toggle('is-invalid', invalid);
+        if (feedback) feedback.style.display = invalid ? 'block' : 'none';
+        return !invalid;
+      };
+      fields.forEach(field => {
+        field.addEventListener('input', () => validateField(field));
+        field.addEventListener('change', () => validateField(field));
+      });
+      form.addEventListener('submit', event => {
+        const valid = fields.map(field => validateField(field, true)).every(Boolean);
+        if (!valid) event.preventDefault();
+      });
+      if (/*[[${mostrarFormulario}]]*/ false) {
+        bootstrap.Modal.getOrCreateInstance(modalElement).show();
+      }
+      form.querySelectorAll('.is-invalid').forEach(field => {
+        const message = field.parentElement.querySelector('[data-client-error]');
+        if (message) message.style.display = 'none';
+      });
+    })();
+  </script>
 </body>
 
 </html>

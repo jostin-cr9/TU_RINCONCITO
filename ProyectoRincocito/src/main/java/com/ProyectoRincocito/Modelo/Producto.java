@@ -22,8 +22,8 @@ public class Producto {
     private Long id;
 
     @NotBlank(message = "El código del producto es obligatorio")
-    @Size(max = 50, message = "El código no puede superar 50 caracteres")
-    @Column(name = "codigo", nullable = false, length = 50)
+    @Size(max = 10, message = "El código no puede superar 10 caracteres")
+    @Column(name = "codigo", nullable = false, length = 10)
     private String codigo;
 
     // Validación del nombre del producto
@@ -40,7 +40,7 @@ public class Producto {
     @NotNull(message = "El precio del producto no puede ser nulo")
     @Min(value = 1, message = "El precio del producto debe ser un valor positivo")
     @DecimalMin(value = "0.50", message = "El precio del producto debe ser mayor que los 0.50centimos")
-    @DecimalMax(value = "1000.00", message = "El precio del producto debe ser menor que los 1000.00")
+    @DecimalMax(value = "500.00", message = "El precio del producto debe ser menor que los 500.00")
     @Column(nullable = false)
     private Double precio;
 
