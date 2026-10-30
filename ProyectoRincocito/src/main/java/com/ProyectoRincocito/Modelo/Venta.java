@@ -17,7 +17,7 @@ public class Venta {
     private Double total;
 
     @ManyToOne
-    @JoinColumn(name = "id_cliente")
+    @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
      @OneToMany(mappedBy = "venta", cascade = CascadeType.ALL, orphanRemoval = true)

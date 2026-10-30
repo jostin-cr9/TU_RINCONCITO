@@ -12,6 +12,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.DecimalMax;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "productos")
@@ -19,6 +20,12 @@ public class Producto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @NotBlank(message = "El código del producto es obligatorio")
+    @Size(max = 50, message = "El código no puede superar 50 caracteres")
+    @Column(name = "codigo", nullable = false, length = 50)
+    private String codigo;
+
     // Validación del nombre del producto
     @NotBlank(message = "El nombre del producto no puede estar vacío")
     @Column(nullable = false, length = 100)
@@ -54,6 +61,14 @@ public class Producto {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getCodigo() {
+        return codigo;
+    }
+
+    public void setCodigo(String codigo) {
+        this.codigo = codigo;
     }
 
     public String getNombre() {
