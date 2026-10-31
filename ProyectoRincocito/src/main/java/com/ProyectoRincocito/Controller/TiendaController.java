@@ -11,7 +11,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.ProyectoRincocito.Modelo.Movimiento;
+import com.ProyectoRincocito.Modelo.Cliente;
 import com.ProyectoRincocito.Modelo.Venta;
+import com.ProyectoRincocito.Repository.ClienteRepository;
 import com.ProyectoRincocito.Repository.MovimientoRepository;
 import com.ProyectoRincocito.Repository.ProductoRepository;
 import com.ProyectoRincocito.Repository.VentaRepository;
@@ -22,17 +24,60 @@ public class TiendaController {
     private final ProductoRepository productoRepository;
     private final VentaRepository ventaRepository;
     private final MovimientoRepository movimientoRepository;
+    private final ClienteRepository clienteRepository;
 
     public TiendaController(ProductoRepository productoRepository,
             VentaRepository ventaRepository,
-            MovimientoRepository movimientoRepository) {
+            MovimientoRepository movimientoRepository,
+            ClienteRepository clienteRepository) {
         this.productoRepository = productoRepository;
         this.ventaRepository = ventaRepository;
         this.movimientoRepository = movimientoRepository;
+        this.clienteRepository = clienteRepository;
     }
 
     @GetMapping("/")
     public String inicio() { return "index"; }
+
+    @PostMapping("/registro-cliente")
+    public String registrarCliente(@RequestParam String nombre,
+            @RequestParam String apellido,
+            @RequestParam String documento,
+            @RequestParam(required = false) String telefono,
+            @RequestParam String correo,
+            @RequestParam(required = false) String password,
+            @RequestParam(required = false) String confirmarPassword,
+            @RequestParam(required = false) String aceptarTerminos,
+            Model model) {
+        String error = null;
+        if (nombre.isBlank() || apellido.isBlank() || documento.isBlank() || correo.isBlank()) {
+            error = "Completa todos los campos obligatorios.";
+        } else if (!correo.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
+            error = "Ingresa un correo electrónico válido.";
+        } else if (password == null || password.length() < 8) {
+            error = "La contraseña debe tener al menos 8 caracteres.";
+        } else if (!password.equals(confirmarPassword)) {
+            error = "Las contraseñas no coinciden.";
+        } else if (aceptarTerminos == null) {
+            error = "Debes aceptar los términos y condiciones.";
+        } else if (clienteRepository.existsByDocumento(documento.trim())) {
+            error = "Ya existe un cliente registrado con ese documento.";
+        }
+
+        if (error != null) {
+            model.addAttribute("registroError", error);
+            model.addAttribute("abrirRegistro", true);
+            return "index";
+        }
+
+        Cliente cliente = new Cliente();
+        cliente.setNombre((nombre.trim() + " " + apellido.trim()).trim());
+        cliente.setDocumento(documento.trim());
+        cliente.setTelefono(telefono == null ? null : telefono.trim());
+        cliente.setCorreo(correo.trim());
+        clienteRepository.save(cliente);
+        return "redirect:/?registro=exitoso";
+    }
 
     @GetMapping("/login")
     public String login(@RequestParam(required = false) String modulo, Model model) {
