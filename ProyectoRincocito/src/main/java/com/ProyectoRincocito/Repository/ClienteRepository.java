@@ -6,4 +6,5 @@ import com.ProyectoRincocito.Modelo.Cliente;
 
 public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     boolean existsByDocumento(String documento);
+    boolean existsByCorreoIgnoreCase(String correo);
 }

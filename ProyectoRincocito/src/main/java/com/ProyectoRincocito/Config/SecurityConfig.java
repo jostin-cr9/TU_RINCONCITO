@@ -23,7 +23,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/registro-cliente", "/img/**")
                 .permitAll()
-                .anyRequest().authenticated()
+                // Solo el admin y el empleado pueden entrar a la intranet 
+                .anyRequest().hasAnyRole("ADMIN", "Empleado")
             )
             .formLogin(form -> form
                 .loginPage("/login")
@@ -38,7 +39,6 @@ public class SecurityConfig {
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
                 .invalidateHttpSession(true)
-                .deleteCookies("JSESSIONID")
                 .permitAll()
             );
 
