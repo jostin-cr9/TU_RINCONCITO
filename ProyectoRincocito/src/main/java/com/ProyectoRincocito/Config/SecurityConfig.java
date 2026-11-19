@@ -1,31 +1,28 @@
 package com.ProyectoRincocito.Config;
 
+import java.util.Locale;
+
+import com.ProyectoRincocito.Repository.UsuarioRepository;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import com.ProyectoRincocito.Repository.UsuarioRepository;
-
-import java.util.Locale;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
 
     @Bean
-    SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(
-                    "/", "/login", "/registro-cliente",
-                    "/img/**", "/css/**", "/js/**", "/webjars/**", "/favicon.ico"
-                ).permitAll()
+                .requestMatchers("/", "/login", "/registro-cliente", "/img/**")
+                .permitAll()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -34,7 +31,7 @@ public class SecurityConfig {
                 .usernameParameter("usuario")
                 .passwordParameter("clave")
                 .defaultSuccessUrl("/dashboard", true)
-                .failureUrl("/login?error")
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             .logout(logout -> logout
@@ -49,15 +46,16 @@ public class SecurityConfig {
     }
 
     @Bean
-    PasswordEncoder passwordEncoder() {
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
     @Bean
-    UserDetailsService userDetailsService(UsuarioRepository usuarioRepository) {
-        return username -> usuarioRepository.findByUsername(username)
+    public UserDetailsService userDetailsService(UsuarioRepository usuarioRepository) {
+        return nombreUsuario -> usuarioRepository.findByUsername(nombreUsuario)
             .map(usuario -> {
                 String rol = usuario.getRol();
+
                 String autoridad = (rol == null || rol.isBlank())
                     ? "ROLE_USER"
                     : (rol.toUpperCase(Locale.ROOT).startsWith("ROLE_")
@@ -70,6 +68,7 @@ public class SecurityConfig {
                     .disabled(!usuario.isActivo())
                     .build();
             })
-            .orElseThrow(() -> new UsernameNotFoundException("Usuario no encontrado"));
+            .orElseThrow(() ->
+                new UsernameNotFoundException("Usuario no encontrado: " + nombreUsuario));
     }
 }
