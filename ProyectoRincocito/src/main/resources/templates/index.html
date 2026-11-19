@@ -84,6 +84,15 @@
       </div>
     </div>
   </nav>
+  <div class="container mt-3" th:if="${param.registro != null}">
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      Cuenta creada correctamente. Ya puedes iniciar sesión.
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+    </div>
+  </div>
+  <div class="container mt-3" th:if="${param.loginError != null}">
+    <div class="alert alert-danger" role="alert">No se pudo iniciar sesión. Revisa tu correo y contraseña.</div>
+  </div>
   <!-- CARRUSEL -->
   <section id="inicio" class="container my-4">
 
@@ -1396,6 +1405,12 @@
       mostrarCarrito();
     }
 
+  </script>
+  <script th:if="${abrirRegistro}">
+    document.addEventListener('DOMContentLoaded', function () {
+      const modal = document.getElementById('modalRegistro');
+      if (modal) bootstrap.Modal.getOrCreateInstance(modal).show();
+    });
   </script>
 </body>
 
