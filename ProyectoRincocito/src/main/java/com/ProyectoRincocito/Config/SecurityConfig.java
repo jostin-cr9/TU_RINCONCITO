@@ -40,7 +40,12 @@ public class SecurityConfig {
                     String destino = esEmpleado ? "/dashboard" : "/";
                     response.sendRedirect(request.getContextPath() + destino);
                 })
-                .failureUrl("/login?error=true")
+                .failureHandler((request, response, exception) -> {
+                    String destino = "tienda".equals(request.getParameter("origen"))
+                        ? "/?loginError=true"
+                        : "/login?error=true";
+                    response.sendRedirect(request.getContextPath() + destino);
+                })
                 .permitAll()
             )
             
