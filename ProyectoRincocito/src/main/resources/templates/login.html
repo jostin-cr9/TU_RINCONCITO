@@ -18,16 +18,21 @@
         <p class="text-muted small mb-0">Intranet del personal</p>
       </div>
 
-      <div th:if="${error}" class="alert alert-danger" role="alert" th:text="${error}"></div>
+      <div th:if="${param.error}" class="alert alert-danger" role="alert">
+        Usuario o contraseña incorrectos, o la cuenta está inactiva.
+      </div>
+      <div th:if="${param.logout}" class="alert alert-success" role="alert">
+        Sesión cerrada correctamente.
+      </div>
 
       <form id="formLogin" th:action="@{/login}" method="post">
         <div class="mb-3 fw-bold">
           <label for="usuario" class="form-label">Usuario</label>
-          <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" required>
+          <input type="text" class="form-control" id="usuario" name="usuario" placeholder="Ingrese su usuario" autocomplete="username" required>
         </div>
         <div class="mb-3 fw-bold">
           <label for="clave" class="form-label">Contraseña</label>
-          <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su contraseña" required>
+          <input type="password" class="form-control" id="clave" name="clave" placeholder="Ingrese su contraseña" autocomplete="current-password" required>
         </div>
         <button type="submit" class="btn btn-success w-100 rounded-3">
         Iniciar sesión
@@ -67,30 +72,6 @@
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Login de la intranet. Por ahora valida contra una cuenta de prueba
-    // porque todavía no está conectado el backend (Spring Security/JWT).
-    // Cuando esté listo el backend, este bloque se reemplaza por el fetch al endpoint de login.
-    document.getElementById('formLogin').addEventListener('submit', function (e) {
-      e.preventDefault();
-
-      const usuario = document.getElementById('usuario').value.trim();
-      const clave = document.getElementById('clave').value.trim();
-      const alerta = document.getElementById('loginAlerta');
-
-      const USUARIO_DEMO = 'admin';
-      const CLAVE_DEMO = 'admin123';
-
-      if (usuario === USUARIO_DEMO && clave === CLAVE_DEMO) {
-        sessionStorage.setItem('rinconcitoAuth', 'ok');
-        window.location.href = '/dashboard';
-      } else {
-        alerta.textContent = 'Usuario o contraseña incorrectos.';
-        alerta.classList.remove('d-none');
-        alerta.classList.add('alert-danger');
-      }
-    });
-  </script>
 </body>
 
 </html>

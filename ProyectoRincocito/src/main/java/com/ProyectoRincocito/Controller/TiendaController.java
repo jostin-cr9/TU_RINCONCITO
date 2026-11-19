@@ -85,14 +85,6 @@ public class TiendaController {
         return "login";
     }
 
-    @PostMapping("/login")
-    public String procesarLogin(@RequestParam String usuario, @RequestParam String clave, Model model) {
-        if (usuario.equals("admin") && clave.equals("admin123")) return "redirect:/dashboard";
-        model.addAttribute("error", "Usuario o contraseña incorrectos");
-        model.addAttribute("modulo", "Intranet");
-        return "login";
-    }
-
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         LocalDate hoy = LocalDate.now(ZoneId.of("America/Bogota"));
