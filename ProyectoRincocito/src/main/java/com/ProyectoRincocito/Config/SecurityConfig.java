@@ -23,18 +23,27 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/login", "/registro-cliente", "/img/**")
                 .permitAll()
-                // Solo el admin y el empleado pueden entrar a la intranet 
-                .anyRequest().hasAnyRole("ADMIN", "Empleado")
+                // Solo el admin y el empleado pueden entrar a la intranet
+                .anyRequest().hasAnyRole("ADMIN", "EMPLEADO")
             )
             .formLogin(form -> form
                 .loginPage("/login")
                 .loginProcessingUrl("/login")
                 .usernameParameter("usuario")
                 .passwordParameter("clave")
-                .defaultSuccessUrl("/dashboard", true)
+                .successHandler((request, response, authentication) -> {
+                    boolean esEmpleado = authentication.getAuthorities().stream()
+                        .anyMatch(autoridad ->
+                            autoridad.getAuthority().equals("ROLE_ADMIN")
+                            || autoridad.getAuthority().equals("ROLE_EMPLEADO"));
+
+                    String destino = esEmpleado ? "/dashboard" : "/";
+                    response.sendRedirect(request.getContextPath() + destino);
+                })
                 .failureUrl("/login?error=true")
                 .permitAll()
             )
+            
             .logout(logout -> logout
                 .logoutUrl("/logout")
                 .logoutSuccessUrl("/login?logout")
