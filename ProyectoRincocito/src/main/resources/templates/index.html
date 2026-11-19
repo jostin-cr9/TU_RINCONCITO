@@ -807,121 +807,90 @@
             Regístrate en TU RINCONCITO.
           </p>
 
-          <form>
+          <form th:action="@{/registro-cliente}" method="post">
 
-            <div class="row g-3">
+  <div th:if="${registroError}"
+       class="alert alert-danger"
+       role="alert"
+       th:text="${registroError}">
+  </div>
 
-              <!-- NOMBRE -->
-              <div class="col-12 col-md-6">
+  <div class="row g-3">
 
-                <label for="registroNombre" class="form-label">
-                  Nombre
-                </label>
+    <div class="col-12 col-md-6">
+      <label for="registroNombre" class="form-label">Nombre</label>
+      <input type="text" class="form-control"
+             id="registroNombre" name="nombre"
+             placeholder="Ingresa tu nombre" required>
+    </div>
 
-                <input type="text" class="form-control" id="registroNombre" placeholder="Ingresa tu nombre">
+    <div class="col-12 col-md-6">
+      <label for="registroApellido" class="form-label">Apellido</label>
+      <input type="text" class="form-control"
+             id="registroApellido" name="apellido"
+             placeholder="Ingresa tu apellido" required>
+    </div>
 
-              </div>
+    <div class="col-12 col-md-6">
+      <label for="registroDni" class="form-label">DNI</label>
+      <input type="text" class="form-control"
+             id="registroDni" name="documento"
+             placeholder="Ingresa tu DNI" required>
+    </div>
 
-              <!-- APELLIDO -->
-              <div class="col-12 col-md-6">
+    <div class="col-12 col-md-6">
+      <label for="registroTelefono" class="form-label">Teléfono</label>
+      <input type="tel" class="form-control"
+             id="registroTelefono" name="telefono"
+             placeholder="Ingresa tu teléfono">
+    </div>
 
-                <label for="registroApellido" class="form-label">
-                  Apellido
-                </label>
+    <div class="col-12">
+      <label for="registroCorreo" class="form-label">Correo electrónico</label>
+      <input type="email" class="form-control"
+             id="registroCorreo" name="correo"
+             placeholder="ejemplo@correo.com" required>
+    </div>
 
-                <input type="text" class="form-control" id="registroApellido" placeholder="Ingresa tu apellido">
+    <div class="col-12 col-md-6">
+      <label for="registroPassword" class="form-label">Contraseña</label>
+      <input type="password" class="form-control"
+             id="registroPassword" name="password"
+             placeholder="Ingresa una contraseña" required>
+    </div>
 
-              </div>
+    <div class="col-12 col-md-6">
+      <label for="registroConfirmPassword" class="form-label">
+        Confirmar contraseña
+      </label>
+      <input type="password" class="form-control"
+             id="registroConfirmPassword" name="confirmarPassword"
+             placeholder="Repite tu contraseña" required>
+    </div>
 
-              <!-- DNI -->
-              <div class="col-12 col-md-6">
+    <div class="col-12">
+      <div class="form-check">
+        <input class="form-check-input"
+               type="checkbox"
+               id="aceptarTerminos"
+               name="aceptarTerminos"
+               value="true"
+               required>
+        <label class="form-check-label" for="aceptarTerminos">
+          Acepto los términos y condiciones.
+        </label>
+      </div>
+    </div>
 
-                <label for="registroDni" class="form-label">
-                  DNI
-                </label>
+    <div class="col-12">
+      <div class="d-grid">
+        <button type="submit" class="btn btn-primary">
+          Crear cuenta
+        </button>
+      </div>
+    </div>
 
-                <input type="text" class="form-control" id="registroDni" placeholder="Ingresa tu DNI">
-
-              </div>
-
-              <!-- TELÉFONO -->
-              <div class="col-12 col-md-6">
-
-                <label for="registroTelefono" class="form-label">
-                  Teléfono
-                </label>
-
-                <input type="tel" class="form-control" id="registroTelefono" placeholder="Ingresa tu teléfono">
-
-              </div>
-
-              <!-- CORREO -->
-              <div class="col-12">
-
-                <label for="registroCorreo" class="form-label">
-                  Correo electrónico
-                </label>
-
-                <input type="email" class="form-control" id="registroCorreo" placeholder="ejemplo@correo.com">
-
-              </div>
-
-              <!-- CONTRASEÑA -->
-              <div class="col-12 col-md-6">
-
-                <label for="registroPassword" class="form-label">
-                  Contraseña
-                </label>
-
-                <input type="password" class="form-control" id="registroPassword" placeholder="Ingresa una contraseña">
-
-              </div>
-
-              <!-- CONFIRMAR -->
-              <div class="col-12 col-md-6">
-
-                <label for="registroConfirmPassword" class="form-label">
-                  Confirmar contraseña
-                </label>
-
-                <input type="password" class="form-control" id="registroConfirmPassword"
-                  placeholder="Repite tu contraseña">
-
-              </div>
-
-              <!-- TÉRMINOS -->
-              <div class="col-12">
-
-                <div class="form-check">
-
-                  <input class="form-check-input" type="checkbox" id="aceptarTerminos">
-
-                  <label class="form-check-label" for="aceptarTerminos">
-
-                    Acepto los términos y condiciones.
-
-                  </label>
-
-                </div>
-
-              </div>
-
-              <!-- BOTÓN -->
-              <div class="col-12">
-
-                <div class="d-grid">
-
-                  <button type="submit" class="btn btn-primary">
-
-                    Crear cuenta
-
-                  </button>
-
-                </div>
-
-              </div>
-
-            </div>
+  </div>
 
           </form>
 
