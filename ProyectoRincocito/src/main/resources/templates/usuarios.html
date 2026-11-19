@@ -61,24 +61,13 @@
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td>admin</td>
-                <td>Rosa Huamán</td>
-                <td>Administrador</td>
-                <td><span class="badge text-bg-success">Activo</span></td>
+              <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.username}"></td>
+                <td th:text="${usuario.username}"></td>
+                <td th:text="${usuario.rol}"></td>
+                <td><span class="badge" th:classappend="${usuario.activo} ? ' text-bg-success' : ' text-bg-secondary'" th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span></td>
               </tr>
-              <tr>
-                <td>cajero01</td>
-                <td>José Quispe</td>
-                <td>Cajero</td>
-                <td><span class="badge text-bg-success">Activo</span></td>
-              </tr>
-              <tr>
-                <td>almacen01</td>
-                <td>Lucía Ramos</td>
-                <td>Almacenero</td>
-                <td><span class="badge text-bg-success">Activo</span></td>
-              </tr>
+              <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td></tr>
             </tbody>
           </table>
         </div>

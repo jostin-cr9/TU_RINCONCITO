@@ -85,7 +85,7 @@ public String registrarCliente(
     } else if (clienteRepository.existsByDocumento(documento.trim())) {
         error = "Ya existe un cliente con ese documento.";
     } else if (clienteRepository.existsByCorreoIgnoreCase(correoNormalizado)
-            || usuarioRepository.existsByUsername(correoNormalizado)) {
+            || usuarioRepository.existsByUsernameIgnoreCase(correoNormalizado)) {
         error = "Ya existe una cuenta con ese correo.";
     }
 

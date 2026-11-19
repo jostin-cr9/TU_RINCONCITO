@@ -61,7 +61,7 @@ public class SecurityConfig {
 
     @Bean
     public UserDetailsService userDetailsService(UsuarioRepository usuarioRepository) {
-        return nombreUsuario -> usuarioRepository.findByUsername(nombreUsuario)
+        return nombreUsuario -> usuarioRepository.findByUsernameIgnoreCase(nombreUsuario.trim())
             .map(usuario -> {
                 String rol = usuario.getRol();
 
