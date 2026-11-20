@@ -15,6 +15,8 @@ public class Venta {
     private LocalDateTime fecha;
     @Column (nullable = false)
     private Double total;
+    @Column(nullable = false, length = 20)
+    private String estado = "RECIBIDO";
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -44,6 +46,14 @@ public class Venta {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public Cliente getCliente() {

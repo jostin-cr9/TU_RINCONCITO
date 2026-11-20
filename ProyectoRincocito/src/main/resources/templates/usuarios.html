@@ -48,14 +48,42 @@
     </header>
 
     <main class="p-3 p-md-4">
-      <p class="text-muted mb-3">Personal autorizado para ingresar a la intranet.</p>
+      <p class="text-muted mb-3">Crea y consulta cuentas de administrador y vendedor. Los vendedores solo pueden gestionar pedidos.</p>
+
+      <div th:if="${mensajeUsuario}" class="alert alert-success" role="alert" th:text="${mensajeUsuario}"></div>
+      <div th:if="${errorUsuario}" class="alert alert-danger" role="alert" th:text="${errorUsuario}"></div>
+
+      <div class="card border-0 shadow-sm mb-4">
+        <div class="card-body p-4">
+          <h2 class="h5 fw-bold mb-1">Agregar vendedor</h2>
+          <p class="text-muted small mb-3">La cuenta recibirá el rol VENDEDOR y entrará directamente a la cola de pedidos.</p>
+          <form th:action="@{/usuarios/vendedor}" method="post" class="row g-3 align-items-end">
+            <div class="col-12 col-lg-4">
+              <label for="vendedorUsername" class="form-label">Correo de acceso</label>
+              <input id="vendedorUsername" name="username" type="email" class="form-control" autocomplete="username" required>
+            </div>
+            <div class="col-12 col-lg-3">
+              <label for="vendedorPassword" class="form-label">Contraseña inicial</label>
+              <input id="vendedorPassword" name="password" type="password" class="form-control" minlength="12" autocomplete="new-password" required>
+            </div>
+            <div class="col-12 col-lg-3">
+              <label for="vendedorConfirmarPassword" class="form-label">Confirmar contraseña</label>
+              <input id="vendedorConfirmarPassword" name="confirmarPassword" type="password" class="form-control" minlength="12" autocomplete="new-password" required>
+            </div>
+            <div class="col-12 col-lg-2 d-grid">
+              <button class="btn btn-success" type="submit"><i class="bi bi-person-plus me-1"></i>Crear cuenta</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
       <div class="card">
         <div class="table-responsive">
           <table class="table mb-0">
             <thead>
               <tr>
-                <th>Usuario</th>
-                <th>Nombre</th>
+                <th>Correo / usuario</th>
+                <th>Tipo de acceso</th>
                 <th>Rol</th>
                 <th>Estado</th>
               </tr>
@@ -63,11 +91,10 @@
             <tbody>
               <tr th:each="usuario : ${usuarios}">
                 <td th:text="${usuario.username}"></td>
-                <td th:text="${usuario.username}"></td>
                 <td th:text="${usuario.rol}"></td>
                 <td><span class="badge" th:classappend="${usuario.activo} ? ' text-bg-success' : ' text-bg-secondary'" th:text="${usuario.activo} ? 'Activo' : 'Inactivo'"></span></td>
               </tr>
-              <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="4" class="text-center text-muted">No hay usuarios registrados.</td></tr>
+              <tr th:if="${#lists.isEmpty(usuarios)}"><td colspan="3" class="text-center text-muted">No hay usuarios registrados.</td></tr>
             </tbody>
           </table>
         </div>

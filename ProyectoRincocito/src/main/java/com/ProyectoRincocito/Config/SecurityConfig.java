@@ -24,8 +24,10 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/registro-cliente", "/img/**")
                 .permitAll()
                 .requestMatchers("/pedidos/**").hasRole("CLIENTE")
-                // Solo administrador y vendedor pueden entrar a la intranet.
-                .anyRequest().hasAnyRole("ADMIN", "VENDEDOR")
+                .requestMatchers("/usuarios/**").hasRole("ADMIN")
+                .requestMatchers("/vendedor/**").hasAnyRole("ADMIN", "VENDEDOR")
+                // El resto de la intranet es exclusivo de administración.
+                .anyRequest().hasRole("ADMIN")
             )
             .formLogin(form -> form
                 .loginPage("/login")
@@ -33,12 +35,10 @@ public class SecurityConfig {
                 .usernameParameter("usuario")
                 .passwordParameter("clave")
                 .successHandler((request, response, authentication) -> {
-                    boolean esEmpleado = authentication.getAuthorities().stream()
-                        .anyMatch(autoridad ->
-                            autoridad.getAuthority().equals("ROLE_ADMIN")
-                            || autoridad.getAuthority().equals("ROLE_VENDEDOR"));
+                    boolean esAdmin = authentication.getAuthorities().stream()
+                        .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_ADMIN"));
 
-                    String destino = esEmpleado ? "/dashboard" : "/";
+                    String destino = esAdmin ? "/dashboard" : "/vendedor/pedidos";
                     response.sendRedirect(request.getContextPath() + destino);
                 })
                 .failureHandler((request, response, exception) -> {

@@ -189,6 +189,7 @@ public String registrarCliente(
         venta.setFecha(java.time.LocalDateTime.now(ZoneId.of("America/Bogota")));
         venta.setCliente(cliente);
         venta.setTotal(totalPedido);
+        venta.setEstado("PENDIENTE");
 
         for (int i = 0; i < productosPedido.size(); i++) {
             Producto producto = productosPedido.get(i);

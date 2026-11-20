@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
+import java.util.Collection;
 import java.time.LocalDateTime;
 import com.ProyectoRincocito.Modelo.Venta;
 
@@ -14,4 +15,9 @@ public interface VentaRepository extends JpaRepository<Venta, Long> {
 
     @EntityGraph(attributePaths = {"detalles", "detalles.producto"})
     List<Venta> findAllByCliente_IdOrderByFechaDesc(Long clienteId);
+
+    @EntityGraph(attributePaths = {"cliente", "detalles", "detalles.producto"})
+    List<Venta> findByEstadoInOrderByFechaAsc(Collection<String> estados);
+
+    long countByEstado(String estado);
 }

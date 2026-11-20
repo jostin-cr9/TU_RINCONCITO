@@ -78,6 +78,7 @@ public class VentaController {
         Producto producto = productoRepository.findById(formulario.getProductoId()).orElseThrow();
         Venta venta = new Venta();
         venta.setFecha(formulario.getFecha().atStartOfDay());
+        venta.setEstado("COMPLETADO");
         if (formulario.getClienteId() != null) {
             venta.setCliente(clienteRepository.findById(formulario.getClienteId()).orElseThrow());
         }
