@@ -10,11 +10,9 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 
 @Configuration
 public class SecurityConfig {
@@ -42,17 +40,6 @@ public class SecurityConfig {
                     boolean esVendedor = authentication.getAuthorities().stream()
                         .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_VENDEDOR"));
 
-                    boolean accesoTienda = "tienda".equals(request.getParameter("origen"));
-                    boolean esCliente = authentication.getAuthorities().stream()
-                        .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_CLIENTE"));
-
-                    if (esCliente && !accesoTienda) {
-                        new SecurityContextLogoutHandler().logout(request, response, authentication);
-                        SecurityContextHolder.clearContext();
-                        response.sendRedirect(request.getContextPath() + "/login?error=rol");
-                        return;
-                    }
-
                     String destino = esAdmin ? "/dashboard" : (esVendedor ? "/vendedor/pedidos" : "/");
                     response.sendRedirect(request.getContextPath() + destino);
                 })
@@ -66,15 +53,7 @@ public class SecurityConfig {
             )
             .exceptionHandling(exceptions -> exceptions
                 .accessDeniedHandler((request, response, exception) -> {
-                    boolean esCliente = request.getUserPrincipal() != null
-                        && request.isUserInRole("CLIENTE");
-                    if (esCliente) {
-                        new SecurityContextLogoutHandler().logout(request, response, null);
-                        SecurityContextHolder.clearContext();
-                        response.sendRedirect(request.getContextPath() + "/login?error=rol");
-                    } else {
-                        response.sendRedirect(request.getContextPath() + "/");
-                    }
+                    response.sendRedirect(request.getContextPath() + "/");
                 })
             )
             
