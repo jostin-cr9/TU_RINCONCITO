@@ -355,6 +355,9 @@
               <span
                 th:text="|Pedido #${venta.id} · ${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}|">Pedido</span>
               <strong class="ms-auto me-3" th:text="|S/ ${#numbers.formatDecimal(venta.total, 1, 2)}|">S/ 0.00</strong>
+              <span class="badge rounded-pill"
+                    th:classappend="${venta.estado == 'ARMADO'} ? ' text-bg-success' : (${venta.estado == 'PENDIENTE'} ? ' text-bg-warning' : ' text-bg-secondary')"
+                    th:text="${venta.estado == 'ARMADO'} ? 'Armado' : (${venta.estado == 'PENDIENTE'} ? 'Por preparar' : 'Recibido')">Recibido</span>
             </button>
           </h3>
           <div class="accordion-collapse collapse" th:id="|compra${venta.id}|" data-bs-parent="#acordeonCompras">

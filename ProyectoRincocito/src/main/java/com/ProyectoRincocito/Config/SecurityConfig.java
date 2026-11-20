@@ -37,8 +37,10 @@ public class SecurityConfig {
                 .successHandler((request, response, authentication) -> {
                     boolean esAdmin = authentication.getAuthorities().stream()
                         .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_ADMIN"));
+                    boolean esVendedor = authentication.getAuthorities().stream()
+                        .anyMatch(autoridad -> autoridad.getAuthority().equals("ROLE_VENDEDOR"));
 
-                    String destino = esAdmin ? "/dashboard" : "/vendedor/pedidos";
+                    String destino = esAdmin ? "/dashboard" : (esVendedor ? "/vendedor/pedidos" : "/");
                     response.sendRedirect(request.getContextPath() + destino);
                 })
                 .failureHandler((request, response, exception) -> {

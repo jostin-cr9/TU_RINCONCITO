@@ -2,9 +2,11 @@ CREATE TABLE IF NOT EXISTS ventas (
     id BIGINT NOT NULL AUTO_INCREMENT,
     fecha DATETIME NOT NULL,
     total DOUBLE NOT NULL,
+    estado VARCHAR(20) NOT NULL DEFAULT 'RECIBIDO',
     cliente_id BIGINT NULL,
     PRIMARY KEY (id),
     KEY idx_ventas_cliente (cliente_id),
+    KEY idx_ventas_estado_fecha (estado, fecha),
     CONSTRAINT fk_ventas_cliente
         FOREIGN KEY (cliente_id) REFERENCES clientes(id)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;

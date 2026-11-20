@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.core.Authentication;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,7 +23,8 @@ public class VendedorController {
     }
 
     @GetMapping("/vendedor/pedidos")
-    public String pedidos(Model model) {
+    public String pedidos(Model model, Authentication authentication) {
+        model.addAttribute("vendedorUsername", authentication.getName());
         model.addAttribute("pedidos", ventaRepository.findByEstadoInOrderByFechaAsc(
                 List.of("PENDIENTE", "ARMADO")));
         model.addAttribute("pedidosPendientes", ventaRepository.countByEstado("PENDIENTE"));
