@@ -31,8 +31,16 @@ public class AdminBootstrap implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) {
-        if (!StringUtils.hasText(username) || !StringUtils.hasText(password)) {
+        boolean usuarioConfigurado = StringUtils.hasText(username);
+        boolean claveConfigurada = StringUtils.hasText(password);
+        if (!usuarioConfigurado && !claveConfigurada) {
             return;
+        }
+        if (!usuarioConfigurado || !claveConfigurada) {
+            throw new IllegalStateException("Configura APP_BOOTSTRAP_ADMIN_USERNAME y APP_BOOTSTRAP_ADMIN_PASSWORD juntas.");
+        }
+        if (password.length() < 12) {
+            throw new IllegalStateException("La contraseña inicial del administrador debe tener al menos 12 caracteres.");
         }
 
         if (usuarioRepository.existsByUsernameIgnoreCase(username.trim())) {

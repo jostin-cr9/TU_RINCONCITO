@@ -21,6 +21,9 @@ import java.util.*;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.ProyectoRincocito.Modelo.Usuario;
 import com.ProyectoRincocito.Repository.UsuarioRepository;
@@ -53,7 +56,19 @@ public class TiendaController {
 }
 
     @GetMapping("/")
-    public String inicio() { return "index"; }
+    public String inicio(Model model, Authentication authentication) {
+        model.addAttribute("productosCatalogo", productoRepository.findAll());
+        if (authentication != null && authentication.isAuthenticated()
+                && !(authentication instanceof AnonymousAuthenticationToken)
+                && authentication.getAuthorities().stream()
+                    .anyMatch(authority -> authority.getAuthority().equals("ROLE_CLIENTE"))) {
+            clienteRepository.findByCorreoIgnoreCase(authentication.getName()).ifPresent(cliente -> {
+                model.addAttribute("clienteActual", cliente);
+                model.addAttribute("misVentas", ventaRepository.findAllByCliente_IdOrderByFechaDesc(cliente.getId()));
+            });
+        }
+        return "index";
+    }
     
 @Transactional
 @PostMapping("/registro-cliente")
@@ -92,6 +107,7 @@ public String registrarCliente(
     if (error != null) {
         model.addAttribute("registroError", error);
         model.addAttribute("abrirRegistro", true);
+        model.addAttribute("productosCatalogo", productoRepository.findAll());
         return "index";
     }
 
@@ -111,6 +127,92 @@ public String registrarCliente(
 
     return "redirect:/?registro=exitoso";
 }
+
+    @Transactional
+    @PostMapping("/pedidos/crear")
+    public String crearPedido(
+            @RequestParam(required = false) List<Long> productoIds,
+            @RequestParam(required = false) List<Integer> cantidades,
+            Authentication authentication,
+            RedirectAttributes redirectAttributes) {
+        if (productoIds == null || cantidades == null || productoIds.isEmpty()
+                || productoIds.size() != cantidades.size()) {
+            redirectAttributes.addFlashAttribute("pedidoError", "Agrega al menos un producto antes de confirmar.");
+            return "redirect:/#catalogo";
+        }
+
+        Cliente cliente = clienteRepository.findByCorreoIgnoreCase(authentication.getName()).orElse(null);
+        if (cliente == null) {
+            redirectAttributes.addFlashAttribute("pedidoError", "No encontramos el perfil de cliente asociado a tu cuenta.");
+            return "redirect:/";
+        }
+
+        Map<Long, Integer> cantidadesPorProducto = new TreeMap<>();
+        for (int i = 0; i < productoIds.size(); i++) {
+            Long productoId = productoIds.get(i);
+            Integer cantidad = cantidades.get(i);
+            if (productoId == null || cantidad == null || cantidad < 1 || cantidad > 100) {
+                redirectAttributes.addFlashAttribute("pedidoError", "Revisa las cantidades de tu carrito.");
+                return "redirect:/#catalogo";
+            }
+            cantidadesPorProducto.merge(productoId, cantidad, Integer::sum);
+            if (cantidadesPorProducto.get(productoId) > 100) {
+                redirectAttributes.addFlashAttribute("pedidoError", "La cantidad máxima por producto es 100.");
+                return "redirect:/#catalogo";
+            }
+        }
+
+        List<Producto> productosPedido = new ArrayList<>();
+        double totalPedido = 0;
+        for (Map.Entry<Long, Integer> item : cantidadesPorProducto.entrySet()) {
+            Producto producto = productoRepository.findByIdForUpdate(item.getKey()).orElse(null);
+            if (producto == null) {
+                redirectAttributes.addFlashAttribute("pedidoError", "Uno de los productos ya no está disponible.");
+                return "redirect:/#catalogo";
+            }
+            if (producto.getStock() < item.getValue()) {
+                redirectAttributes.addFlashAttribute("pedidoError", "Stock insuficiente para: " + producto.getNombre());
+                return "redirect:/#catalogo";
+            }
+            productosPedido.add(producto);
+            totalPedido += producto.getPrecio() * item.getValue();
+        }
+
+        Venta venta = new Venta();
+        venta.setFecha(java.time.LocalDateTime.now(ZoneId.of("America/Bogota")));
+        venta.setCliente(cliente);
+        venta.setTotal(totalPedido);
+
+        for (int i = 0; i < productosPedido.size(); i++) {
+            Producto producto = productosPedido.get(i);
+            int cantidad = cantidadesPorProducto.get(producto.getId());
+            DetalleVenta detalle = new com.ProyectoRincocito.Modelo.DetalleVenta();
+            detalle.setVenta(venta);
+            detalle.setProducto(producto);
+            detalle.setCantidad(cantidad);
+            detalle.setPrecioUnitario(producto.getPrecio());
+            detalle.setSubtotal(producto.getPrecio() * cantidad);
+            venta.getDetalles().add(detalle);
+        }
+
+        venta = ventaRepository.save(venta);
+        for (Producto producto : productosPedido) {
+            int cantidad = cantidadesPorProducto.get(producto.getId());
+            producto.setStock(producto.getStock() - cantidad);
+            productoRepository.save(producto);
+
+            Movimiento movimiento = new Movimiento();
+            movimiento.setProducto(producto);
+            movimiento.setTipo("Salida");
+            movimiento.setCantidad(cantidad);
+            movimiento.setFecha(LocalDate.now(ZoneId.of("America/Bogota")));
+            movimiento.setMotivo("Pedido web #" + venta.getId());
+            movimientoRepository.save(movimiento);
+        }
+
+        redirectAttributes.addFlashAttribute("pedidoId", venta.getId());
+        return "redirect:/";
+    }
 
     @GetMapping("/login")
     public String login(@RequestParam(required = false) String modulo, Model model) {

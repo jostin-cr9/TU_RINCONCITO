@@ -60,16 +60,19 @@
         </ul>
 
         <div class="d-flex align-items-center gap-2">
-          <!-- Carrito -->
           <button class="btn btn-outline-dark position-relative" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
             <i class="bi bi-cart3"></i>
-            <span id="badgeCarrito"
-              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-              0
-            </span>
+            <span id="badgeCarrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </button>
-
+          <div th:if="${clienteActual != null}" class="d-flex align-items-center gap-2 flex-wrap">
+            <span class="small text-secondary">Hola, <strong th:text="${clienteActual.nombre}">Cliente</strong></span>
+            <a class="btn btn-outline-primary btn-sm" href="#misCompras"><i class="bi bi-receipt me-1"></i>Mis compras</a>
+            <form th:action="@{/logout}" method="post" class="m-0">
+              <button class="btn btn-outline-secondary btn-sm" type="submit">Cerrar sesión</button>
+            </form>
+          </div>
+          <th:block th:if="${clienteActual == null}">
           <!-- Login cliente -->
           <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
             data-bs-target="#modalLoginCliente">
@@ -80,6 +83,7 @@
           <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalRegistro">
             Registrarse
           </button>
+          </th:block>
         </div>
       </div>
     </div>
@@ -92,6 +96,15 @@
   </div>
   <div class="container mt-3" th:if="${param.loginError != null}">
     <div class="alert alert-danger" role="alert">No se pudo iniciar sesión. Revisa tu correo y contraseña.</div>
+  </div>
+  <div class="container mt-3" th:if="${param.logout != null}">
+    <div class="alert alert-success" role="alert">Sesión cerrada correctamente.</div>
+  </div>
+  <div id="pedidoConfirmado" class="container mt-3" th:if="${pedidoId != null}">
+    <div class="alert alert-success" role="alert" th:text="|Pedido #${pedidoId} registrado. Puedes revisar el detalle en “Mis compras”.|"></div>
+  </div>
+  <div class="container mt-3" th:if="${pedidoError != null}">
+    <div class="alert alert-danger" role="alert" th:text="${pedidoError}"></div>
   </div>
   <!-- CARRUSEL -->
   <section id="inicio" class="container my-4">
@@ -260,165 +273,58 @@
       </button>
     </div>
 
-    <div class="row g-4">
-      <!-- Producto 1 -->
-      <div class="col-6 col-md-4 col-lg-3  producto" data-categoria="bebidas">
-        <div class="card h-100 rounded-4 ">
-          <img th:src="@{/img/aguas.png}" class="card-img-top img-fluid">
+    <div class="row g-4" th:if="${!#lists.isEmpty(productosCatalogo)}">
+      <div class="col-6 col-md-4 col-lg-3 producto" th:each="producto : ${productosCatalogo}"
+           th:data-categoria="${#strings.toLowerCase(producto.categoria)}"
+           th:attr="data-producto-id=${producto.id},data-producto-nombre=${producto.nombre},data-producto-precio=${producto.precio},data-producto-stock=${producto.stock}">
+        <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="bg-body-tertiary d-flex align-items-center justify-content-center" style="height: 150px">
+            <i class="bi bi-basket2 text-primary" style="font-size: 3rem" aria-hidden="true"></i>
+          </div>
           <div class="card-body d-flex flex-column">
-            <p class="card-text fw-bold fs-5">
-              Agua mineral
-            </p>
-            <p class="card-text text-secondary">
-              Cielo de 625 ml
-            </p>
-            <p class="fw-bold fs-5">
-              S/ 1.50
-            </p>
-
-            <button type="button" class="btn btn-primary mt-auto"
-              onclick="agregarAlCarrito('Agua Cielo mineral', 1.50)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-
-          </div>
-        </div>
-      </div>
-      <!-- Producto 2 -->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="snacks">
-        <div class="card h-100 rounded-4 ">
-          <img th:src="@{/img/galletas.png}" class="card-img-top">
-          <div class="card-body d-flex flex-column">
-            <p class="card-text fw-bold fs-5">
-              Galletas
-            </p>
-            <p class="card-text fs-5 text-secondary">
-              Galletas de todos los sabores
-            </p>
-            <p class="fw-bold fs-5">
-              S/1.00
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Galletas', 1.00)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
+            <span class="badge rounded-pill text-bg-light align-self-start mb-2" th:text="${producto.categoria}">Categoría</span>
+            <h3 class="h6 fw-bold" th:text="${producto.nombre}">Producto</h3>
+            <p class="small text-secondary flex-grow-1" th:text="${producto.descripcion}">Descripción</p>
+            <div class="d-flex justify-content-between align-items-center mb-3">
+              <span class="fs-5 fw-bold text-primary" th:text="|S/ ${#numbers.formatDecimal(producto.precio, 1, 2)}|">S/ 0.00</span>
+              <span class="small" th:classappend="${producto.stock > 0} ? ' text-success' : ' text-danger'"
+                    th:text="${producto.stock > 0} ? |Stock: ${producto.stock}| : 'Agotado'">Stock</span>
+            </div>
+            <button type="button" class="btn btn-primary mt-auto" onclick="agregarProductoDesdeTarjeta(this)"
+                    th:disabled="${producto.stock < 1}">
+              <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
             </button>
           </div>
         </div>
       </div>
-      <!-- Producto 3 -->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="abarrotes">
-        <div class="card h-100 rounded-4  ">
-          <img th:src="@{/img/arroz.png}" class="card-img-top img-fluid">
-          <div class="card-body d-flex flex-column">
-            <p class="card-text fw-bold fs-5">
-              Arroz de la mejor calidad
-            </p>
-            <p class="card-text fs-5 text-secondary">
-              Arroz en diferentes presentaciones
-            </p>
-            <p class="fw-bold fs-5">
-              S/4.50
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Arroz', 4.50)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      </div>
-      <!-- Producto 4-->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="limpieza">
-        <div class="card h-100 rounded-4 ">
-          <img th:src="@{/img/detergente.png}" class="card-img-top">
-          <div class="card-body d-flex flex-column">
-            <p class="card-text fw-bold fs-5">
-              Detergente
-            </p>
-            <p class="card-text text-secondary">
-              Detergente para ropa en paquete de 1kg y suelto
-            </p>
-            <p class="fw-bold fs-5">
-              S/5.50
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Detergente', 5.50)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Producto 5-->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="abarrotes">
-        <div class="card h-100 rounded-4">
-          <img th:src="@{/img/leche.png}" class="card-img-top">
-          <div class="card-body d-flex flex-column">
-            <p class="card-text fw-bold fs-5">
-              Leche Gloria
-            </p>
-            <p class="card-text fs-5 text-secondary">
-              Leche evaporada,
-              lactosa, deslactosada
-            </p>
-            <p class="fw-bold fs-5">
-              S/4.00
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Leche Gloria', 4.00)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Producto 6-->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="snacks">
-        <div class="card h-100 rounded-4 ">
-          <img th:src="@{/img/chocolate.png}" class="card-img-top">
-          <div class="card-body d-flex flex-column ">
-            <p class="card-text">
-              Chocolates
-            </p>
-            <p class="card-text text-secondary">
-              Chocolate para disfrutar
-            </p>
-            <p class="fw-bold fs-5">
-              S/2.50
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Chocolates', 2.50)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      </div>
-
-
-      <!-- Producto 7-->
-      <div class="col-6 col-md-4 col-lg-3 producto" data-categoria="bebidas">
-        <div class="card h-100 rounded-4  ">
-          <img th:src="@{/img/gaseosas.png}" class="card-img-top">
-          <div class="card-body d-flex flex-column">
-            <p class="card-text">
-              Gaseosas
-            </p>
-            <p class="card-text text-secondary">
-              Gaseosa en pack de 3Lt
-            </p>
-            <p class="fw-bold fs-5">
-              S/8.50
-            </p>
-            <button type="button" class="btn btn-primary mt-auto" onclick="agregarAlCarrito('Gaseosa', 8.50)">
-              <i class="bi bi-cart-plus me-1"></i>
-              Agregar al carrito
-            </button>
-          </div>
-        </div>
-      </div>
-
     </div>
+    <div class="alert alert-light border text-center" th:if="${#lists.isEmpty(productosCatalogo)}">
+      Aún no hay productos registrados para mostrar.
     </div>
+
+    <section id="misCompras" class="mt-5" th:if="${clienteActual != null}">
+      <h2 class="h4 fw-bold mb-3">Mis compras</h2>
+      <div th:if="${#lists.isEmpty(misVentas)}" class="alert alert-light border">Todavía no tienes pedidos.</div>
+      <div class="accordion" id="acordeonCompras" th:if="${!#lists.isEmpty(misVentas)}">
+        <div class="accordion-item" th:each="venta, iter : ${misVentas}">
+          <h3 class="accordion-header">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                    th:attr="data-bs-target=|#compra${venta.id}|,aria-controls=|compra${venta.id}|">
+              <span th:text="|Pedido #${venta.id} · ${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}|">Pedido</span>
+              <strong class="ms-auto me-3" th:text="|S/ ${#numbers.formatDecimal(venta.total, 1, 2)}|">S/ 0.00</strong>
+            </button>
+          </h3>
+          <div class="accordion-collapse collapse" th:id="|compra${venta.id}|" data-bs-parent="#acordeonCompras">
+            <div class="accordion-body">
+              <ul class="mb-0">
+                <li th:each="detalle : ${venta.detalles}"
+                    th:text="|${detalle.cantidad} × ${detalle.producto.nombre} · S/ ${#numbers.formatDecimal(detalle.subtotal, 1, 2)}|">Detalle</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
   </section>
   <!-- MODAL AGUA -->
   <div class="modal fade" id="modalAgua" tabindex="-1" aria-labelledby="modalAguaLabel" aria-hidden="true">
@@ -1139,6 +1045,8 @@
 
     <div class="offcanvas-body">
 
+      <form id="formPedido" th:action="@{/pedidos/crear}" method="post">
+
       <div id="carritoVacio" class="alert alert-light border">
         <i class="bi bi-cart-x me-2"></i>
         Tu carrito está vacío.
@@ -1153,9 +1061,14 @@
         </span>
       </div>
 
-      <button class="btn btn-primary w-100 mt-3" data-bs-toggle="modal" data-bs-target="#modalLoginCliente">
+      <button th:if="${clienteActual != null}" class="btn btn-primary w-100 mt-3" type="submit">
+        Confirmar pedido
+      </button>
+      <button th:if="${clienteActual == null}" class="btn btn-primary w-100 mt-3" type="button" data-bs-toggle="modal" data-bs-target="#modalLoginCliente">
         Continuar con el pedido
       </button>
+
+      </form>
 
     </div>
   </div>
@@ -1282,28 +1195,56 @@
   <script>
 
     let carrito = [];
+    try {
+      const carritoGuardado = JSON.parse(localStorage.getItem("tuRinconcitoCarrito") || "[]");
+      carrito = Array.isArray(carritoGuardado) ? carritoGuardado.filter(item => item.id && item.cantidad > 0) : [];
+    } catch (error) {
+      carrito = [];
+    }
 
-    function agregarAlCarrito(nombre, precio) {
+    if (document.getElementById("pedidoConfirmado")) {
+      carrito = [];
+      localStorage.removeItem("tuRinconcitoCarrito");
+    }
+
+    function agregarAlCarrito(id, nombre, precio, stock) {
 
       const productoExistente = carrito.find(
-        producto => producto.nombre === nombre
+        producto => producto.id === id
       );
 
       if (productoExistente) {
-
-        productoExistente.cantidad++;
+        if (productoExistente.cantidad < stock) productoExistente.cantidad++;
 
       } else {
 
         carrito.push({
+          id: id,
           nombre: nombre,
           precio: precio,
+          stock: stock,
           cantidad: 1
         });
 
       }
 
       mostrarCarrito();
+    }
+
+    function agregarProductoDesdeTarjeta(boton) {
+      const tarjeta = boton.closest(".producto");
+      agregarAlCarrito(
+        Number(tarjeta.dataset.productoId),
+        tarjeta.dataset.productoNombre,
+        Number(tarjeta.dataset.productoPrecio),
+        Number(tarjeta.dataset.productoStock)
+      );
+    }
+
+    function escaparHtml(valor) {
+      return String(valor).replace(/[&<>"']/g, caracter => ({
+        "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+      })[caracter]);
     }
 
 
@@ -1332,7 +1273,7 @@
 
         item.innerHTML = `
             <div>
-                <strong>${producto.nombre}</strong>
+                <strong>${escaparHtml(producto.nombre)}</strong>
                 <br>
                 <small>
                     S/ ${producto.precio.toFixed(2)} × ${producto.cantidad}
@@ -1372,12 +1313,13 @@
         "S/ " + totalCarrito.toFixed(2);
 
       badge.textContent = cantidadProductos;
+      localStorage.setItem("tuRinconcitoCarrito", JSON.stringify(carrito));
     }
 
 
     function aumentarCantidad(indice) {
 
-      carrito[indice].cantidad++;
+      if (carrito[indice].cantidad < carrito[indice].stock) carrito[indice].cantidad++;
 
       mostrarCarrito();
     }
@@ -1405,6 +1347,30 @@
 
       mostrarCarrito();
     }
+
+    const formPedido = document.getElementById("formPedido");
+    formPedido.addEventListener("submit", function (evento) {
+      formPedido.querySelectorAll("input[name='productoIds'], input[name='cantidades']").forEach(input => input.remove());
+      if (carrito.length === 0) {
+        evento.preventDefault();
+        return;
+      }
+      carrito.forEach(producto => {
+        const productoId = document.createElement("input");
+        productoId.type = "hidden";
+        productoId.name = "productoIds";
+        productoId.value = producto.id;
+        formPedido.appendChild(productoId);
+
+        const cantidad = document.createElement("input");
+        cantidad.type = "hidden";
+        cantidad.name = "cantidades";
+        cantidad.value = producto.cantidad;
+        formPedido.appendChild(cantidad);
+      });
+    });
+
+    mostrarCarrito();
 
   </script>
   <script th:if="${abrirRegistro}">
