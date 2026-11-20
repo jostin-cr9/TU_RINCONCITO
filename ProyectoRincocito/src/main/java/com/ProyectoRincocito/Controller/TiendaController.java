@@ -1,6 +1,7 @@
 package com.ProyectoRincocito.Controller;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 import org.springframework.stereotype.Controller;
@@ -72,6 +73,11 @@ public class TiendaController {
         return "index";
     }
     
+    @GetMapping("/registro-cliente")
+    public String formularioRegistro() {
+        return "registro";
+    }
+
 @Transactional
 @PostMapping("/registro-cliente")
 public String registrarCliente(
@@ -108,9 +114,7 @@ public String registrarCliente(
 
     if (error != null) {
         model.addAttribute("registroError", error);
-        model.addAttribute("abrirRegistro", true);
-        model.addAttribute("productosCatalogo", productoRepository.findAll());
-        return "index";
+        return "registro";
     }
 
     Cliente cliente = new Cliente();
@@ -226,27 +230,16 @@ public String registrarCliente(
     @GetMapping("/dashboard")
     public String dashboard(Model model) {
         LocalDate hoy = LocalDate.now(ZoneId.of("America/Bogota"));
-        var productos = productoRepository.findAll();
-        var productosStockBajo = productos.stream()
-                .filter(producto -> producto.getStock() < 10)
-                .toList();
-        double totalVentasHoy = ventaRepository.findAll().stream()
-                .filter(venta -> venta.getFecha() != null && venta.getFecha().toLocalDate().equals(hoy))
-                .mapToDouble(Venta::getTotal)
-                .sum();
-        var movimientos = movimientoRepository.findAll();
-        long entradasHoy = movimientos.stream()
-                .filter(movimiento -> movimiento.getFecha().equals(hoy)
-                        && movimiento.getTipo().equals("Entrada"))
-                .count();
-        var movimientosRecientes = movimientos.stream()
-                .sorted(Comparator.comparing(Movimiento::getFecha).reversed())
-                .limit(5)
-                .toList();
+        LocalDateTime inicioDia = hoy.atStartOfDay();
+        LocalDateTime finDia = hoy.plusDays(1).atStartOfDay();
+        var productosStockBajo = productoRepository.findTop10ByStockLessThanOrderByStockAsc(10);
+        double totalVentasHoy = ventaRepository.sumarVentasEntre(inicioDia, finDia);
+        long entradasHoy = movimientoRepository.countByFechaAndTipo(hoy, "Entrada");
+        var movimientosRecientes = movimientoRepository.findTop5ByOrderByFechaDesc();
 
-        model.addAttribute("totalProductos", productos.size());
+        model.addAttribute("totalProductos", productoRepository.count());
         model.addAttribute("productosStockBajo", productosStockBajo);
-        model.addAttribute("cantidadStockBajo", productosStockBajo.size());
+        model.addAttribute("cantidadStockBajo", productoRepository.countByStockLessThan(10));
         model.addAttribute("totalVentasHoy", totalVentasHoy);
         model.addAttribute("entradasHoy", entradasHoy);
         model.addAttribute("movimientosRecientes", movimientosRecientes);

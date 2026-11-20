@@ -62,27 +62,29 @@
           <button class="btn btn-outline-dark position-relative" type="button" data-bs-toggle="offcanvas"
             data-bs-target="#offcanvasCarrito" aria-controls="offcanvasCarrito">
             <i class="bi bi-cart3"></i>
-            <span id="badgeCarrito" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
+            <span id="badgeCarrito"
+              class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">0</span>
           </button>
           <div th:if="${clienteActual != null}" class="d-flex align-items-center gap-2 flex-wrap">
             <span class="small text-secondary">Hola, <strong th:text="${clienteActual.nombre}">Cliente</strong></span>
-            <a class="btn btn-outline-secondary btn-sm" href="#miPerfil"><i class="bi bi-person-circle me-1"></i>Mi perfil</a>
-            <a class="btn btn-outline-primary btn-sm" href="#misCompras"><i class="bi bi-receipt me-1"></i>Mis compras</a>
+            <a class="btn btn-outline-secondary btn-sm" href="#miPerfil"><i class="bi bi-person-circle me-1"></i>Mi
+              perfil</a>
+            <a class="btn btn-outline-primary btn-sm" href="#misCompras"><i class="bi bi-receipt me-1"></i>Mis
+              compras</a>
             <form th:action="@{/logout}" method="post" class="m-0">
               <button class="btn btn-outline-secondary btn-sm" type="submit">Cerrar sesión</button>
             </form>
           </div>
           <th:block th:if="${clienteActual == null}">
-          <!-- Login cliente -->
-          <button class="btn btn-outline-primary" type="button" data-bs-toggle="modal"
-            data-bs-target="#modalLoginCliente">
-            Iniciar sesión
-          </button>
+            <!-- Login cliente -->
+            <a class="btn btn-outline-primary" th:href="@{/login(modulo='Cliente')}">
+              Iniciar sesión
+            </a>
 
-          <!-- Registro cliente -->
-          <button class="btn btn-primary" type="button" data-bs-toggle="modal" data-bs-target="#modalRegistro">
-            Registrarse
-          </button>
+            <!-- Registro cliente -->
+            <a class="btn btn-primary" th:href="@{/registro-cliente}">
+              Registrarse
+            </a>
           </th:block>
         </div>
       </div>
@@ -101,7 +103,8 @@
     <div class="alert alert-success" role="alert">Sesión cerrada correctamente.</div>
   </div>
   <div id="pedidoConfirmado" class="container mt-3" th:if="${pedidoId != null}">
-    <div class="alert alert-success" role="alert" th:text="|Pedido #${pedidoId} registrado. Puedes revisar el detalle en “Mis compras”.|"></div>
+    <div class="alert alert-success" role="alert"
+      th:text="|Pedido #${pedidoId} registrado. Puedes revisar el detalle en “Mis compras”.|"></div>
   </div>
   <div class="container mt-3" th:if="${pedidoError != null}">
     <div class="alert alert-danger" role="alert" th:text="${pedidoError}"></div>
@@ -275,32 +278,44 @@
 
     <div class="row g-4" th:if="${!#lists.isEmpty(productosCatalogo)}">
       <div class="col-6 col-md-4 col-lg-3 producto" th:each="producto : ${productosCatalogo}"
-           th:data-categoria="${#strings.toLowerCase(producto.categoria)}"
-           th:attr="data-producto-id=${producto.id},data-producto-nombre=${producto.nombre},data-producto-precio=${producto.precio},data-producto-stock=${producto.stock}">
+        th:data-categoria="${#strings.toLowerCase(producto.categoria)}"
+        th:attr="data-producto-id=${producto.id},data-producto-nombre=${producto.nombre},data-producto-precio=${producto.precio},data-producto-stock=${producto.stock}">
         <div class="card h-100 border-0 shadow-sm rounded-4 overflow-hidden">
           <div class="bg-body-tertiary d-flex align-items-center justify-content-center" style="height: 150px">
             <th:block th:with="nombreBuscable=${#strings.toLowerCase(producto.nombre)}">
-              <img th:if="${#strings.contains(nombreBuscable, 'agua')}" th:src="@{/img/aguas.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'gallet')}" th:src="@{/img/galletas.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'arroz')}" th:src="@{/img/arroz.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'deterg')}" th:src="@{/img/detergente.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'leche')}" th:src="@{/img/leche.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'chocol')}" th:src="@{/img/chocolate.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <img th:if="${#strings.contains(nombreBuscable, 'gaseos')}" th:src="@{/img/gaseosas.png}" th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
-              <i th:if="${!#strings.contains(nombreBuscable, 'agua') and !#strings.contains(nombreBuscable, 'gallet') and !#strings.contains(nombreBuscable, 'arroz') and !#strings.contains(nombreBuscable, 'deterg') and !#strings.contains(nombreBuscable, 'leche') and !#strings.contains(nombreBuscable, 'chocol') and !#strings.contains(nombreBuscable, 'gaseos')}" class="bi bi-basket2 text-primary" style="font-size: 3rem" aria-hidden="true"></i>
+              <img th:if="${#strings.contains(nombreBuscable, 'agua')}" th:src="@{/img/aguas.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'gallet')}" th:src="@{/img/galletas.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'arroz')}" th:src="@{/img/arroz.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'deterg')}" th:src="@{/img/detergente.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'leche')}" th:src="@{/img/leche.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'chocol')}" th:src="@{/img/chocolate.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <img th:if="${#strings.contains(nombreBuscable, 'gaseos')}" th:src="@{/img/gaseosas.png}"
+                th:alt="${producto.nombre}" class="img-fluid p-3" style="max-height: 150px; object-fit: contain">
+              <i th:if="${!#strings.contains(nombreBuscable, 'agua') and !#strings.contains(nombreBuscable, 'galleta') and !#strings.contains(nombreBuscable, 'arroz') 
+              and !#strings.contains(nombreBuscable, 'detergente') and !#strings.contains(nombreBuscable, 'leche') and !#strings.contains(nombreBuscable, 'chocolate') 
+              and !#strings.contains(nombreBuscable, 'gaseosa')}"
+                class="bi bi-basket2 text-primary" style="font-size: 3rem" aria-hidden="true"></i>
             </th:block>
           </div>
           <div class="card-body d-flex flex-column">
-            <span class="badge rounded-pill text-bg-light align-self-start mb-2" th:text="${producto.categoria}">Categoría</span>
+            <span class="badge rounded-pill text-bg-light align-self-start mb-2"
+              th:text="${producto.categoria}">Categoría</span>
             <h3 class="h6 fw-bold" th:text="${producto.nombre}">Producto</h3>
             <p class="small text-secondary flex-grow-1" th:text="${producto.descripcion}">Descripción</p>
             <div class="d-flex justify-content-between align-items-center mb-3">
-              <span class="fs-5 fw-bold text-primary" th:text="|S/ ${#numbers.formatDecimal(producto.precio, 1, 2)}|">S/ 0.00</span>
+              <span class="fs-5 fw-bold text-primary" th:text="|S/ ${#numbers.formatDecimal(producto.precio, 1, 2)}|">S/
+                0.00</span>
               <span class="small" th:classappend="${producto.stock > 0} ? ' text-success' : ' text-danger'"
-                    th:text="${producto.stock > 0} ? |Stock: ${producto.stock}| : 'Agotado'">Stock</span>
+                th:text="${producto.stock > 0} ? |Stock: ${producto.stock}| : 'Agotado'">Stock</span>
             </div>
             <button type="button" class="btn btn-primary mt-auto" onclick="agregarProductoDesdeTarjeta(this)"
-                    th:disabled="${producto.stock < 1}">
+              th:disabled="${producto.stock < 1}">
               <i class="bi bi-cart-plus me-1"></i>Agregar al carrito
             </button>
           </div>
@@ -315,10 +330,16 @@
       <h2 class="h4 fw-bold mb-3">Mi perfil</h2>
       <div class="card border-0 shadow-sm rounded-4">
         <div class="card-body row g-3">
-          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Nombre</span><strong th:text="${clienteActual.nombre}">Cliente</strong></div>
-          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Correo</span><strong th:text="${clienteActual.correo}">correo@ejemplo.com</strong></div>
-          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Documento</span><strong th:text="${clienteActual.documento}">Documento</strong></div>
-          <div class="col-12 col-md-6" th:if="${clienteActual.telefono != null and !#strings.isEmpty(clienteActual.telefono)}"><span class="small text-secondary d-block">Teléfono</span><strong th:text="${clienteActual.telefono}">Teléfono</strong></div>
+          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Nombre</span><strong
+              th:text="${clienteActual.nombre}">Cliente</strong></div>
+          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Correo</span><strong
+              th:text="${clienteActual.correo}">correo@ejemplo.com</strong></div>
+          <div class="col-12 col-md-6"><span class="small text-secondary d-block">Documento</span><strong
+              th:text="${clienteActual.documento}">Documento</strong></div>
+          <div class="col-12 col-md-6"
+            th:if="${clienteActual.telefono != null and !#strings.isEmpty(clienteActual.telefono)}"><span
+              class="small text-secondary d-block">Teléfono</span><strong
+              th:text="${clienteActual.telefono}">Teléfono</strong></div>
         </div>
       </div>
     </section>
@@ -330,8 +351,9 @@
         <div class="accordion-item" th:each="venta, iter : ${misVentas}">
           <h3 class="accordion-header">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                    th:attr="data-bs-target=|#compra${venta.id}|,aria-controls=|compra${venta.id}|">
-              <span th:text="|Pedido #${venta.id} · ${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}|">Pedido</span>
+              th:attr="data-bs-target=|#compra${venta.id}|,aria-controls=|compra${venta.id}|">
+              <span
+                th:text="|Pedido #${venta.id} · ${#temporals.format(venta.fecha, 'dd/MM/yyyy HH:mm')}|">Pedido</span>
               <strong class="ms-auto me-3" th:text="|S/ ${#numbers.formatDecimal(venta.total, 1, 2)}|">S/ 0.00</strong>
             </button>
           </h3>
@@ -339,7 +361,8 @@
             <div class="accordion-body">
               <ul class="mb-0">
                 <li th:each="detalle : ${venta.detalles}"
-                    th:text="|${detalle.cantidad} × ${detalle.producto.nombre} · S/ ${#numbers.formatDecimal(detalle.subtotal, 1, 2)}|">Detalle</li>
+                  th:text="|${detalle.cantidad} × ${detalle.producto.nombre} · S/ ${#numbers.formatDecimal(detalle.subtotal, 1, 2)}|">
+                  Detalle</li>
               </ul>
             </div>
           </div>
@@ -794,26 +817,26 @@
 
       <form id="formPedido" th:action="@{/pedidos/crear}" method="post">
 
-      <div id="carritoVacio" class="alert alert-light border">
-        <i class="bi bi-cart-x me-2"></i>
-        Tu carrito está vacío.
-      </div>
+        <div id="carritoVacio" class="alert alert-light border">
+          <i class="bi bi-cart-x me-2"></i>
+          Tu carrito está vacío.
+        </div>
 
-      <div id="listaCarrito" class="list-group mb-3"></div>
+        <div id="listaCarrito" class="list-group mb-3"></div>
 
-      <div class="border-top pt-3 d-flex justify-content-between">
-        <span class="fw-bold">Total</span>
-        <span id="totalCarrito" class="fw-bold text-primary">
-          S/ 0.00
-        </span>
-      </div>
+        <div class="border-top pt-3 d-flex justify-content-between">
+          <span class="fw-bold">Total</span>
+          <span id="totalCarrito" class="fw-bold text-primary">
+            S/ 0.00
+          </span>
+        </div>
 
-      <button th:if="${clienteActual != null}" class="btn btn-primary w-100 mt-3" type="submit">
-        Confirmar pedido
-      </button>
-      <button th:if="${clienteActual == null}" class="btn btn-primary w-100 mt-3" type="button" data-bs-toggle="modal" data-bs-target="#modalLoginCliente">
-        Continuar con el pedido
-      </button>
+        <button th:if="${clienteActual != null}" class="btn btn-primary w-100 mt-3" type="submit">
+          Confirmar pedido
+        </button>
+      <a th:if="${clienteActual == null}" class="btn btn-primary w-100 mt-3" th:href="@{/login(modulo='Cliente')}">
+          Continuar con el pedido
+      </a>
 
       </form>
 

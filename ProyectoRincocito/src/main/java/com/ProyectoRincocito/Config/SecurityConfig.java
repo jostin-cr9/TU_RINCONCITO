@@ -24,8 +24,8 @@ public class SecurityConfig {
                 .requestMatchers("/", "/login", "/registro-cliente", "/img/**")
                 .permitAll()
                 .requestMatchers("/pedidos/**").hasRole("CLIENTE")
-                // Solo el admin y el empleado pueden entrar a la intranet
-                .anyRequest().hasAnyRole("ADMIN", "EMPLEADO")
+                // Solo administrador y vendedor pueden entrar a la intranet.
+                .anyRequest().hasAnyRole("ADMIN", "VENDEDOR")
             )
             .formLogin(form -> form
                 .loginPage("/login")
@@ -36,14 +36,14 @@ public class SecurityConfig {
                     boolean esEmpleado = authentication.getAuthorities().stream()
                         .anyMatch(autoridad ->
                             autoridad.getAuthority().equals("ROLE_ADMIN")
-                            || autoridad.getAuthority().equals("ROLE_EMPLEADO"));
+                            || autoridad.getAuthority().equals("ROLE_VENDEDOR"));
 
                     String destino = esEmpleado ? "/dashboard" : "/";
                     response.sendRedirect(request.getContextPath() + destino);
                 })
                 .failureHandler((request, response, exception) -> {
                     String destino = "tienda".equals(request.getParameter("origen"))
-                        ? "/?loginError=true"
+                        ? "/login?modulo=Cliente&error=true"
                         : "/login?error=true";
                     response.sendRedirect(request.getContextPath() + destino);
                 })
@@ -71,11 +71,16 @@ public class SecurityConfig {
             .map(usuario -> {
                 String rol = usuario.getRol();
 
-                String autoridad = (rol == null || rol.isBlank())
+                String rolNormalizado = rol == null ? "" : rol.toUpperCase(Locale.ROOT);
+                if (rolNormalizado.startsWith("ROLE_")) {
+                    rolNormalizado = rolNormalizado.substring(5);
+                }
+                if (rolNormalizado.equals("EMPLEADO")) {
+                    rolNormalizado = "VENDEDOR";
+                }
+                String autoridad = rolNormalizado.isBlank()
                     ? "ROLE_USER"
-                    : (rol.toUpperCase(Locale.ROOT).startsWith("ROLE_")
-                        ? rol.toUpperCase(Locale.ROOT)
-                        : "ROLE_" + rol.toUpperCase(Locale.ROOT));
+                    : "ROLE_" + rolNormalizado;
 
                 return User.withUsername(usuario.getUsername())
                     .password(usuario.getPassword())
