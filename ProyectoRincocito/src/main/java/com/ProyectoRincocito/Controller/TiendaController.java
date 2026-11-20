@@ -136,8 +136,9 @@ public String registrarCliente(
             Authentication authentication,
             RedirectAttributes redirectAttributes) {
         if (productoIds == null || cantidades == null || productoIds.isEmpty()
+                || productoIds.size() > 100
                 || productoIds.size() != cantidades.size()) {
-            redirectAttributes.addFlashAttribute("pedidoError", "Agrega al menos un producto antes de confirmar.");
+            redirectAttributes.addFlashAttribute("pedidoError", "Revisa los productos de tu carrito.");
             return "redirect:/#catalogo";
         }
 
