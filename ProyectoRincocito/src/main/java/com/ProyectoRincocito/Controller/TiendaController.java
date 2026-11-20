@@ -8,9 +8,11 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import com.ProyectoRincocito.Modelo.Producto;
 
 import com.ProyectoRincocito.Modelo.Movimiento;
 import com.ProyectoRincocito.Modelo.Cliente;
+import com.ProyectoRincocito.Modelo.DetalleVenta;
 import com.ProyectoRincocito.Modelo.Venta;
 import com.ProyectoRincocito.Repository.ClienteRepository;
 import com.ProyectoRincocito.Repository.MovimientoRepository;
